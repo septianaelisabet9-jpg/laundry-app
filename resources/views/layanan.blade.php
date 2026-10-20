@@ -38,6 +38,7 @@
             <td>{{ $l->jenis }}</td>
             <td>Rp {{ number_format($l->harga, 0, ',', '.') }}</td>
             <td>
+                <a href="/edit_layanan/{{ $l->id }}">Edit</a>
                 <a href="/hapus-layanan/{{ $l->id }}" onclick="return confirm('Yakin ingin menghapus layanan ini?')">Hapus</a>
             </td>
         </tr>

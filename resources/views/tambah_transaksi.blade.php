@@ -6,7 +6,7 @@
     <title>Tambah Transaksi - Laundry</title>
 </head>
 <body>
-    <h2>Form Tambah Transaksi</h2>
+    <h2> Tambah Transaksi</h2>
     
     <!-- PERBAIKAN DI SINI: ganti action ke /simpan_transaksi -->
     <form action="/simpan_transaksi" method="POST">

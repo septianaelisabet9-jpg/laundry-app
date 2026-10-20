@@ -35,9 +35,12 @@
             <td>{{ $p->nama_pelanggan }}</td>
             <td>{{ $p->no_tlpn }}</td>
             <td>{{ $p->alamat }}</td>
+           
             <td>
-                <a href="/hapus-pelanggan/{{ $p->id }}" onclick="return confirm('Yakin ingin menghapus data pelanggan ini?')">Hapus</a>
+            <a href="/edit_pelanggan/{{ $p->id }}">Edit</a> | 
+            <a href="/hapus_pelanggan/{{ $p->id }}" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
             </td>
+            
         </tr>
         @endforeach
     </table>

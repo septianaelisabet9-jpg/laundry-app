@@ -6,7 +6,7 @@
     <title>Laundry</title>
 </head>
 <body>
-    <h2>Dashboard Utama, Selamat Datang {{ session('u') }}!</h2>
+    <h2> Selamat Datang {{ session('u') }}! Siap melayani cucian bersih untuk pelanggan hari ini? 🧺</h2>
     <hr>
 
     <h3>Menu Navigasi:</h3>

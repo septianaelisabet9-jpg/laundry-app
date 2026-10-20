@@ -5,7 +5,7 @@
     <title>Input Pembayaran Otomatis</title>
 </head>
 <body>
-    <h2>Form Input Pembayaran</h2>
+    <h2>Input Pembayaran</h2>
 
     <p><a href="/pembayaran">Kembali ke Data Pembayaran</a></p>
 
@@ -33,7 +33,7 @@
 
         <p><em>*Tanggal dan jumlah pembayaran akan terisi otomatis sesuai total tagihan transaksi.</em></p>
 
-        <button type="submit">Simpan Pembayaran Otomatis</button>
+        <button type="submit">Simpan Pembayaran</button>
     </form>
 </body>
 </html>

@@ -6,7 +6,7 @@
     <title>Tambah Pelanggan - Laundry</title>
 </head>
 <body>
-    <h2>Form Tambah Pelanggan</h2>
+    <h2>Tambah Pelanggan</h2>
     
     <form action="/simpan_pelanggan" method="POST">
         @csrf
@@ -17,7 +17,7 @@
         <input type="text" name="no_tlpn" required><br><br>
 
         <label>Alamat:</label><br>
-        <textarea name="alamat" rows="4" required></textarea><br><br>
+        <textarea name="alamat"  required></textarea><br><br>
 
         <button type="submit">Simpan Data</button>
         <a href="/pelanggan">Batal</a>

@@ -16,4 +16,7 @@
         <input type="password" id="password" name="password" required><br>
 
         <button type="submit">Login</button>
+        <br>
+        <p>Belum punya akun?
+         <a href="/register">Register</a></p>
     </form>

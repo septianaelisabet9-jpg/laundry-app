@@ -47,6 +47,24 @@ class Laundry extends Controller
         return redirect('/');
     }
 
+    public function register()
+{
+    return view('register'); 
+}
+
+public function aksiRegister(Request $request)
+{
+    // Simpan akun baru ke tabel users
+    DB::table('users')->insert([
+        'name' => $request->input('username'),
+        'password' => $request->input('password'),
+        'email' => $request->input('email'),
+        'level' => 'Kasir',
+    ]);
+
+    return redirect('/login')->with('success', 'Registrasi berhasil, silakan login!');
+}
+
     // --- PELANGGAN ---
     public function indexPelanggan()
     {
@@ -79,6 +97,25 @@ class Laundry extends Controller
         DB::table('pelanggan')->where('id', $id)->delete();
         return redirect('/pelanggan');
     }
+    public function editPelanggan($id)
+{
+    if (!session('u')) return redirect('/');
+
+    $data['pelanggan'] = DB::table('pelanggan')->where('id', $id)->first();
+    return view('edit_pelanggan', $data);
+}
+
+public function editPelangganAksi(Request $request, $id)
+{
+    DB::table('pelanggan')->where('id', $id)->update([
+        'nama_pelanggan' => $request->input('nama_pelanggan'),
+        'no_tlpn'        => $request->input('no_tlpn'),
+        'alamat'         => $request->input('alamat'),
+        
+    ]);
+
+    return redirect('/pelanggan');
+}
 
     public function pdfPelanggan()
     {
@@ -141,6 +178,26 @@ class Laundry extends Controller
         DB::table('layanan')->where('id', $id)->delete();
         return redirect('/layanan');
     }
+
+    public function editLayanan($id)
+{
+    if (!session('u')) return redirect('/');
+
+    $data['layanan'] = DB::table('layanan')->where('id', $id)->first();
+    return view('edit_layanan', $data);
+}
+
+public function editLayananAksi(Request $request, $id)
+{
+    DB::table('layanan')->where('id', $id)->update([
+        'nama_layanan' => $request->input('nama_layanan'),
+        'jenis'        => $request->input('jenis'),
+        'harga'        => $request->input('harga'),
+        
+    ]);
+
+    return redirect('/layanan');
+}
 
     public function pdfLayanan()
     {
@@ -275,8 +332,7 @@ class Laundry extends Controller
         return Excel::download(new TransaksiExport, 'laporan-transaksi-' . date('Y-m-d') . '.xlsx');
     }
 
-    // --- PEMBAYARAN ---
-    public function indexPembayaran()
+       public function indexPembayaran()
     {
         if (!session('u')) return redirect('/');
 
@@ -292,35 +348,42 @@ class Laundry extends Controller
             }
         }
 
+
+        $transaksiList = DB::table('transaksi')
+            ->join('pelanggan', 'transaksi.id_pelanggan', '=', 'pelanggan.id')
+            ->select('transaksi.*', 'pelanggan.nama_pelanggan')
+            ->get();
+
         return view('pembayaran', [
             'pembayaran' => $pembayaran,
-            'laporan'    => $pembayaran
+            'laporan'    => $pembayaran,
+            'transaksi'  => $transaksiList
         ]);
     }
 
     public function tambahPembayaran()
-    {
-        if (!session('u')) return redirect('/');
+{
+    if (!session('u')) return redirect('/');
 
-        $data['transaksi'] = DB::table('transaksi')
-            ->join('pelanggan', 'transaksi.id_pelanggan', '=', 'pelanggan.id')
-            ->where('transaksi.status_bayar', 'Belum Lunas')
-            ->select('transaksi.*', 'pelanggan.nama_pelanggan')
-            ->get();
+    $data['transaksi'] = DB::table('transaksi')
+        ->join('pelanggan', 'transaksi.id_pelanggan', '=', 'pelanggan.id')
+        ->where('transaksi.status_bayar', 'Belum Lunas')
+        ->select('transaksi.*', 'pelanggan.nama_pelanggan')
+        ->get();
 
-        return view('tambah_pembayaran', $data);
-    }
+    return view('tambah_pembayaran', $data);
+}
 
     public function simpanPembayaran(Request $request)
     {
-        // Otomatis ambil nominal total_bayar dari tabel transaksi
+ 
         $transaksi = DB::table('transaksi')->where('id', $request->input('transaksi_id'))->first();
         $totalTagihan = $transaksi ? $transaksi->total_bayar : 0;
 
         DB::table('pembayaran')->insert([
             'id_transaksi'      => $request->input('transaksi_id'),
-            'tgl_bayar'         => now(), // Otomatis tanggal hari ini
-            'jmlh_bayar'        => $totalTagihan, // Otomatis terisi nominal tagihan
+            'tgl_bayar'         => now(), 
+            'jmlh_bayar'        => $totalTagihan,
             'metode_pembayaran' => $request->input('metode_pembayaran'),
             'id_karyawan'       => session('id_user') ?? 1,
         ]);
@@ -332,6 +395,7 @@ class Laundry extends Controller
 
         return redirect('/pembayaran');
     }
+
 
     // --- LAPORAN ---
     public function laporan(Request $request)
@@ -367,7 +431,7 @@ class Laundry extends Controller
         ]);
     }
 
-    // --- KARYAWAN & TKRY ---
+    // -
     public function karyawan()
     {
         if (!session('u')) return redirect('/');

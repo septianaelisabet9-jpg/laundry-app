@@ -6,7 +6,7 @@
     <title>Tambah Layanan - Laundry</title>
 </head>
 <body>
-    <h2>Form Tambah Layanan</h2>
+    <h2>Tambah Layanan</h2>
     
     <form action="/simpan-layanan" method="POST">
         @csrf
