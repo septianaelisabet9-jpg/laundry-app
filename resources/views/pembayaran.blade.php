@@ -1,28 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Pembayaran</title>
+</head>
+<body>
 
-    <h2>Input Pembayaran</h2>
-
-    <form action="/simpan_pembayaran" method="POST">
-        @csrf
-        <label>Pilih Transaksi (Belum Lunas):</label><br>
-        <select name="transaksi_id" required>
-            <option value="">Pilih Transaksi</option>
-            @foreach($transaksi as $t)
-                <option value="{{ $t->id }}">
-                    #TRX-{{ $t->id }} - {{ $t->nama_pelanggan }} (Rp {{ number_format($t->total_bayar, 0, ',', '.') }})
-                </option>
-            @endforeach
-        </select><br><br>
-
-        <label>Metode Pembayaran:</label><br>
-        <select name="metode_pembayaran" required>
-            <option value="cash">Tunai (Cash)</option>
-            <option value="qris">QRIS</option>
-            <option value="transfer">Transfer Bank</option>
-        </select><br><br>
-
-        <button type="submit">Simpan Pembayaran</button>
+    <h2>Data Pembayaran Laundry</h2>
     
-        <a href="/pembayaran">Batal</a>
-    </form>
+    <p>
+        <a href="/home">Kembali ke Dashboard</a> | 
+        <a href="/tambah_pembayaran"><button>+ Tambah Pembayaran</button></a>
+    </p>
+
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama Pelanggan</th>
+                <th>Tanggal Bayar</th>
+                <th>Jumlah Bayar</th>
+                <th>Metode Pembayaran</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php $no = 1; @endphp
+            @foreach($pembayaran as $p)
+            <tr>
+                <td>{{ $no++ }}</td>
+                <td>{{ $p->nama_pelanggan }}</td>
+                <td>{{ $p->tgl_bayar }}</td>
+                <td>Rp {{ number_format($p->jmlh_bayar, 0, ',', '.') }}</td>
+                <td>{{ $p->metode_pembayaran }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+ 
 </body>
 </html>
