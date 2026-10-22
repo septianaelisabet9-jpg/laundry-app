@@ -48,25 +48,24 @@ class Laundry extends Controller
     }
 
     public function register()
-{
-    return view('register'); 
-}
+    {
+        return view('register'); 
+    }
 
-public function aksiRegister(Request $request)
-{
-    // Simpan akun baru ke tabel users
-    DB::table('users')->insert([
-        'name' => $request->input('username'),
-        'password' => $request->input('password'),
-        'email' => $request->input('email'),
-        'level' => 'Kasir',
-    ]);
+    public function aksiRegister(Request $request)
+    {
+        DB::table('users')->insert([
+            'name' => $request->input('username'),
+            'password' => $request->input('password'),
+            'email' => $request->input('email'),
+            'level' => 'Kasir',
+        ]);
 
-    return redirect('/login')->with('success', 'Registrasi berhasil, silakan login!');
-}
+        return redirect('/login')->with('success', 'Registrasi berhasil, silakan login!');
+    }
 
     // --- PELANGGAN ---
-    public function indexPelanggan()
+    public function pelanggan()
     {
         if (!session('u')) return redirect('/');
 
@@ -97,25 +96,25 @@ public function aksiRegister(Request $request)
         DB::table('pelanggan')->where('id', $id)->delete();
         return redirect('/pelanggan');
     }
+
     public function editPelanggan($id)
-{
-    if (!session('u')) return redirect('/');
+    {
+        if (!session('u')) return redirect('/');
 
-    $data['pelanggan'] = DB::table('pelanggan')->where('id', $id)->first();
-    return view('edit_pelanggan', $data);
-}
+        $data['pelanggan'] = DB::table('pelanggan')->where('id', $id)->first();
+        return view('edit_pelanggan', $data);
+    }
 
-public function editPelangganAksi(Request $request, $id)
-{
-    DB::table('pelanggan')->where('id', $id)->update([
-        'nama_pelanggan' => $request->input('nama_pelanggan'),
-        'no_tlpn'        => $request->input('no_tlpn'),
-        'alamat'         => $request->input('alamat'),
-        
-    ]);
+    public function editPelangganAksi(Request $request, $id)
+    {
+        DB::table('pelanggan')->where('id', $id)->update([
+            'nama_pelanggan' => $request->input('nama_pelanggan'),
+            'no_tlpn'        => $request->input('no_tlpn'),
+            'alamat'         => $request->input('alamat'),
+        ]);
 
-    return redirect('/pelanggan');
-}
+        return redirect('/pelanggan');
+    }
 
     public function pdfPelanggan()
     {
@@ -147,7 +146,7 @@ public function editPelangganAksi(Request $request, $id)
     }
 
     // --- LAYANAN ---
-    public function indexLayanan()
+    public function layanan()
     {
         if (!session('u')) return redirect('/');
 
@@ -180,24 +179,23 @@ public function editPelangganAksi(Request $request, $id)
     }
 
     public function editLayanan($id)
-{
-    if (!session('u')) return redirect('/');
+    {
+        if (!session('u')) return redirect('/');
 
-    $data['layanan'] = DB::table('layanan')->where('id', $id)->first();
-    return view('edit_layanan', $data);
-}
+        $data['layanan'] = DB::table('layanan')->where('id', $id)->first();
+        return view('edit_layanan', $data);
+    }
 
-public function editLayananAksi(Request $request, $id)
-{
-    DB::table('layanan')->where('id', $id)->update([
-        'nama_layanan' => $request->input('nama_layanan'),
-        'jenis'        => $request->input('jenis'),
-        'harga'        => $request->input('harga'),
-        
-    ]);
+    public function editLayananAksi(Request $request, $id)
+    {
+        DB::table('layanan')->where('id', $id)->update([
+            'nama_layanan' => $request->input('nama_layanan'),
+            'jenis'        => $request->input('jenis'),
+            'harga'        => $request->input('harga'),
+        ]);
 
-    return redirect('/layanan');
-}
+        return redirect('/layanan');
+    }
 
     public function pdfLayanan()
     {
@@ -229,7 +227,7 @@ public function editLayananAksi(Request $request, $id)
     }
 
     // --- TRANSAKSI ---
-    public function indexTransaksi()
+    public function transaksi()
     {
         if (!session('u')) return redirect('/');
 
@@ -275,8 +273,6 @@ public function editLayananAksi(Request $request, $id)
             'id_layanan'   => $request->input('id_layanan'),
             'jumlah'       => $berat,
             'subtotal'     => $total,
-            'created_at'   => now(),
-            'updated_at'   => now(),
         ]);
 
         return redirect('/transaksi');
@@ -307,7 +303,7 @@ public function editLayananAksi(Request $request, $id)
 
         $html = '<h2>LAPORAN TRANSAKSI LAUNDRY</h2>';
         $html .= '<table border="1" cellpadding="5" cellspacing="0"><tr><th>No</th><th>Pelanggan</th><th>Layanan</th><th>Berat</th><th>Total</th><th>Status</th></tr>';
-        
+
         $no = 1;
         foreach ($transaksi as $t) {
             $html .= '<tr>
@@ -332,7 +328,8 @@ public function editLayananAksi(Request $request, $id)
         return Excel::download(new TransaksiExport, 'laporan-transaksi-' . date('Y-m-d') . '.xlsx');
     }
 
-       public function indexPembayaran()
+    // --- PEMBAYARAN ---
+    public function pembayaran()
     {
         if (!session('u')) return redirect('/');
 
@@ -348,7 +345,6 @@ public function editLayananAksi(Request $request, $id)
             }
         }
 
-
         $transaksiList = DB::table('transaksi')
             ->join('pelanggan', 'transaksi.id_pelanggan', '=', 'pelanggan.id')
             ->select('transaksi.*', 'pelanggan.nama_pelanggan')
@@ -362,40 +358,37 @@ public function editLayananAksi(Request $request, $id)
     }
 
     public function tambahPembayaran()
-{
-    if (!session('u')) return redirect('/');
+    {
+        if (!session('u')) return redirect('/');
 
-    $data['transaksi'] = DB::table('transaksi')
-        ->join('pelanggan', 'transaksi.id_pelanggan', '=', 'pelanggan.id')
-        ->where('transaksi.status_bayar', 'Belum Lunas')
-        ->select('transaksi.*', 'pelanggan.nama_pelanggan')
-        ->get();
+        $data['transaksi'] = DB::table('transaksi')
+            ->join('pelanggan', 'transaksi.id_pelanggan', '=', 'pelanggan.id')
+            ->where('transaksi.status_bayar', 'Belum Lunas')
+            ->select('transaksi.*', 'pelanggan.nama_pelanggan')
+            ->get();
 
-    return view('tambah_pembayaran', $data);
-}
+        return view('tambah_pembayaran', $data);
+    }
 
     public function simpanPembayaran(Request $request)
     {
- 
         $transaksi = DB::table('transaksi')->where('id', $request->input('transaksi_id'))->first();
         $totalTagihan = $transaksi ? $transaksi->total_bayar : 0;
 
         DB::table('pembayaran')->insert([
             'id_transaksi'      => $request->input('transaksi_id'),
-            'tgl_bayar'         => now(), 
+            'tgl_bayar'         => now(),
             'jmlh_bayar'        => $totalTagihan,
             'metode_pembayaran' => $request->input('metode_pembayaran'),
             'id_karyawan'       => session('id_user') ?? 1,
         ]);
 
-        // Otomatis ubah status_bayar transaksi menjadi Lunas
         DB::table('transaksi')
             ->where('id', $request->input('transaksi_id'))
             ->update(['status_bayar' => 'Lunas']);
 
         return redirect('/pembayaran');
     }
-
 
     // --- LAPORAN ---
     public function laporan(Request $request)
@@ -431,7 +424,7 @@ public function editLayananAksi(Request $request, $id)
         ]);
     }
 
-    // -
+    // --- KARYAWAN & TKRY ---
     public function karyawan()
     {
         if (!session('u')) return redirect('/');

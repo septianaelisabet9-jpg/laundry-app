@@ -31,7 +31,7 @@
         </select>
         <br><br>
 
-        <p><em>*Tanggal dan jumlah pembayaran akan terisi otomatis sesuai total tagihan transaksi.</em></p>
+        
 
         <button type="submit">Simpan Pembayaran</button>
     </form>
