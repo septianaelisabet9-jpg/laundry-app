@@ -55,6 +55,8 @@ Route::get('/laporan', 'App\Http\Controllers\Laundry@laporan');
 // --- KARYAWAN ---
 Route::get('/karyawan', 'App\Http\Controllers\Laundry@karyawan');
 Route::get('/tkry', 'App\Http\Controllers\Laundry@tkry')->name('tkry');
+Route::get('/karyawan/pdf', 'App\Http\Controllers\Laundry@pdfKaryawan');
+Route::get('/karyawan/excel', 'App\Http\Controllers\Laundry@excelKaryawan');
 Route::post('/aksi_tkry', 'App\Http\Controllers\Laundry@aksi_tkry')->name('aksi_tkry');
 Route::get('/edit_karyawan/{id}', 'App\Http\Controllers\Laundry@editKaryawan');
 Route::post('/hapus_karyawan/{id}', 'App\Http\Controllers\Laundry@hapusKaryawan');
