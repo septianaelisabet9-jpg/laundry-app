@@ -8,7 +8,6 @@
 <body>
     <h2>Data Transaksi Laundry</h2>
 
-    
     <button type="button" onclick="window.print()">Window Print</button>
     <button type="button"><a href="/transaksi/pdf" target="_blank">📄 Download PDF</a></button>
     <button><a href="/transaksi/excel">📊 Export Excel</a></button>
@@ -16,7 +15,7 @@
     <br><br>
 
     <button>
-    <a href="/tambah-transaksi">Tambah Transaksi Baru</a>
+        <a href="/tambah-transaksi">Tambah Transaksi Baru</a>
     </button>
 
     <button>
@@ -43,7 +42,15 @@
             <td>{{ $t->nama_layanan }}</td>
             <td>{{ $t->berat }} kg</td>
             <td>Rp {{ number_format($t->total_bayar, 0, ',', '.') }}</td>
-            <td>{{ $t->status_laundry }}</td>
+            <td>
+                {{ $t->status_laundry }}
+                @if($t->status_laundry == 'Proses')
+                    <br>
+                    <a href="/update-status-laundry/{{ $t->id }}" onclick="return confirm('Tandai laundry ini sudah selesai?')">
+                        <button type="button">Tandai Selesai</button>
+                    </a>
+                @endif
+            </td>
             <td>{{ $t->status_bayar }}</td>
             <td>
                 <a href="/hapus-transaksi/{{ $t->id }}" onclick="return confirm('Yakin ingin menghapus transaksi ini?')">Hapus</a>

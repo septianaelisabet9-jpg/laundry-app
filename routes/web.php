@@ -29,6 +29,7 @@ Route::get('/layanan', 'App\Http\Controllers\Laundry@layanan');
 Route::get('/tambah-layanan', 'App\Http\Controllers\Laundry@tambahLayanan');
 Route::post('/simpan-layanan', 'App\Http\Controllers\Laundry@simpanLayanan');
 Route::get('/hapus_layanan/{id}', 'App\Http\Controllers\Laundry@hapusLayanan');
+Route::get('/update-status-laundry/{id}', 'App\Http\Controllers\Laundry@updateStatusLaundry');
 Route::get('/layanan/pdf', 'App\Http\Controllers\Laundry@pdfLayanan');
 Route::get('/layanan/excel', 'App\Http\Controllers\Laundry@excelLayanan');
 
