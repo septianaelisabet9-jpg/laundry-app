@@ -2,8 +2,7 @@
 @section('content')
 
 <!-- Memanggil CSS Bootstrap agar garis tabel dan tombol langsung berfungsi -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <div class="container-fluid py-3">
     <!-- Tombol Atas -->
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -40,11 +39,11 @@
                     <td>{{ $k->nama_layanan ?? '-' }}</td>
                     <td class="text-center">
                         <div class="d-flex justify-content-center gap-1">
-                            <a href="/edit_karyawan/{{ $k->id_karyawan }}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="/edit_karyawan/{{ $k->id_karyawan }}" class="btn btn-success" >Edit</a>
                             
                             <form action="/hapus_karyawan/{{ $k->id_karyawan }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                 @csrf
-                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                <button type="submit" class="btn btn-danger">Hapus</button>
                             </form>
                         </div>
                     </td>

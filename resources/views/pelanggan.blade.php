@@ -1,48 +1,57 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Pelanggan - Laundry</title>
-</head>
-<body>
-    <h2>Data Pelanggan Laundry</h2>
+@extends('template')
 
-    <button type="button" onclick="window.print()">Print Window</button>
-    <button><a href="/pelanggan/pdf" target="_blank">Download PDF</a></button>
-    <button><a href="/pelanggan/excel">Export Excel</a></button>
-    <br>
-    <br>
-    <button>
-    <a href="/tambah-pelanggan">Tambah Pelanggan Baru</a>
-    </button>  
-    <button>
-    <a href="/home">Kembali ke Home</a>
-    </button>
-    <br><br>
+@section('content')
+<div class="container-fluid py-3">
+    <h2 class="mb-4">Data Pelanggan Laundry</h2>
 
-    <table border="1" cellpadding="10" cellspacing="0">
-        <tr>
-            <th>No</th>
-            <th>Nama Pelanggan</th>
-            <th>No Telepon</th>
-            <th>Alamat</th>
-            <th>Aksi</th>
-        </tr>
-        @foreach($pelanggan as $p)
-        <tr>
-            <td>{{ $loop->iteration }}</td>
-            <td>{{ $p->nama_pelanggan }}</td>
-            <td>{{ $p->no_tlpn }}</td>
-            <td>{{ $p->alamat }}</td>
-           
-            <td>
-            <a href="/edit_pelanggan/{{ $p->id }}">Edit</a> | 
-            <a href="/hapus_pelanggan/{{ $p->id }}" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
-            </td>
-            
-        </tr>
-        @endforeach
-    </table>
-</body>
-</html>
+    <!-- Tombol Aksi Top -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div>
+            <a href="/home" class="btn btn-outline-secondary btn-sm">&larr; Kembali ke Home</a>
+            <a href="/tambah-pelanggan" class="btn btn-primary btn-sm">+ Tambah Pelanggan Baru</a>
+        </div>
+        <div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">Print Window</button>
+            <a href="/pelanggan/pdf" target="_blank" class="btn btn-danger btn-sm">Download PDF</a>
+            <a href="/pelanggan/excel" class="btn btn-success btn-sm">Export Excel</a>
+        </div>
+    </div>
+
+    <!-- Tabel Bootstrap Bergaris -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle w-100">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th width="50">No</th>
+                    <th>Nama Pelanggan</th>
+                    <th>No Telepon</th>
+                    <th>Alamat</th>
+                    <th width="140">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($pelanggan as $p)
+                <tr>
+                    <td class="text-center">{{ $loop->iteration }}</td>
+                    <td>{{ $p->nama_pelanggan }}</td>
+                    <td>{{ $p->no_tlpn }}</td>
+                    <td>{{ $p->alamat }}</td>
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-1">
+                            <!-- Tombol Edit -->
+                            <a href="/edit_pelanggan/{{ $p->id }}" class="btn btn-warning btn-sm">Edit</a>
+                            
+                            <!-- Tombol Hapus Form POST -->
+                            <form action="/hapus_pelanggan/{{ $p->id }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pelanggan ini?')">
+                                @csrf
+                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endsection

@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Tambah Pembayaran - Laundry</title>
-</head>
-<body>
+
     <h2>Input Pembayaran</h2>
 
     <form action="/simpan_pembayaran" method="POST">
