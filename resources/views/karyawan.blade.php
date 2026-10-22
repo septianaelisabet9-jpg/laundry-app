@@ -1,53 +1,58 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Karyawan</title>
-</head>
-<body>
+@extends('template')
+@section('content')
 
-    <h2>Data Karyawan</h2>
+<!-- Memanggil CSS Bootstrap agar garis tabel dan tombol langsung berfungsi -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <p>
-        <a href="/home">Kembali ke dashboard</a> | 
-        <a href="/tkry"><button type="button">+ Tambah Karyawan Baru</button></a>
-    </p>
+<div class="container-fluid py-3">
+    <!-- Tombol Atas -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="/home" class="btn btn-outline-secondary btn-sm">&larr; Kembali ke Dashboard</a>
+        <a href="/tkry" class="btn btn-primary btn-sm">+ Tambah Karyawan Baru</a>
+    </div>
 
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            <th>ID Karyawan</th>
-            <th>ID User</th>
-            <th>Username Akun</th>
-            <th>Email</th>
-            <th>Nama Karyawan</th>
-            <th>Alamat</th>
-            <th>Jenis Kelamin</th>
-            <th>Layanan</th>
-            <th width="120">Aksi</th>
-        </tr>
-        @foreach($karyawan as $k)
-        <tr>
-            <td align="center">{{ $k->id_karyawan }}</td>
-            <td align="center">{{ $k->id_user }}</td>
-            <td>{{ $k->username ?? '-' }}</td>
-            <td>{{ $k->email ?? '-' }}</td>
-            <td>{{ $k->nama_kry ?? '-' }}</td>
-            <td>{{ $k->alamat_kry ?? '-' }}</td>
-            <td align="center">{{ $k->jk_kry ?? '-' }}</td>
-            <td>{{ $k->nama_layanan ?? '-' }}</td>
-            <td align="center">
-                <a href="/edit_karyawan/{{ $k->id_karyawan }}" style="display:inline;">
-                    <button type="button">Edit</button>
-                </a>
-                <form action="/hapus_karyawan/{{ $k->id_karyawan }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                    @csrf
-                    <button type="submit" style="font-size: 12px; padding: 2px 6px;">Hapus</button>
-                </form>
-            </td>
-        </tr>
-        @endforeach
-    </table>
+    <!-- Tabel dengan Garis Jelas (table-bordered) -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle w-100">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>ID Karyawan</th>
+                    <th>ID User</th>
+                    <th>Username Akun</th>
+                    <th>Email</th>
+                    <th>Nama Karyawan</th>
+                    <th>Alamat</th>
+                    <th>Jenis Kelamin</th>
+                    <th>Layanan</th>
+                    <th width="140">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($karyawan as $k)
+                <tr>
+                    <td class="text-center">{{ $k->id_karyawan }}</td>
+                    <td class="text-center">{{ $k->id_user }}</td>
+                    <td>{{ $k->username ?? '-' }}</td>
+                    <td>{{ $k->email ?? '-' }}</td>
+                    <td>{{ $k->nama_kry ?? '-' }}</td>
+                    <td>{{ $k->alamat_kry ?? '-' }}</td>
+                    <td class="text-center">{{ $k->jk_kry ?? '-' }}</td>
+                    <td>{{ $k->nama_layanan ?? '-' }}</td>
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-1">
+                            <a href="/edit_karyawan/{{ $k->id_karyawan }}" class="btn btn-warning btn-sm">Edit</a>
+                            
+                            <form action="/hapus_karyawan/{{ $k->id_karyawan }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                @csrf
+                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 
-</body>
-</html>
+@endsection

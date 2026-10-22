@@ -6,7 +6,7 @@
     <title>LOGIN</title>
 </head>
 <body>
-    <h2>LOGIN</h2>
+    <h2>SILAHKAN LOGIN TERLEBIH DAHULU!!</h2>
     <form method="POST" action="/login">
         @csrf
         <label for="username">Username:</label>
