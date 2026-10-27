@@ -1,32 +1,58 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Data Karyawan</title>
-</head>
-<body>
+@extends('template')
 
-    <h2>Edit Data Karyawan</h2>
+@section('content')
 
-    <p><a href="/karyawan">Kembali ke Data Karyawan</a></p>
+<title>edit karyawan</title>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            
+            <!-- Tombol Kembali -->
+            <div class="mb-3">
+                <a href="/karyawan" class="btn btn-outline-secondary btn-sm">&larr; Kembali ke Data Karyawan</a>
+            </div>
 
-    <form action="/edit_karyawan_aksi/{{ $karyawan->id_karyawan }}" method="POST">
-        @csrf
+            <!-- Card Form Edit -->
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    <h3 class="fw-bold mb-3">Edit Data Karyawan</h3>
+                    <p class="text-muted small mb-4">Silakan perbarui informasi karyawan di bawah ini.</p>
 
-        <label>Nama Karyawan:</label><br>
-        <input type="text" name="nama_kry" value="{{ $karyawan->nama_kry }}" required><br><br>
+                    <form action="/edit_karyawan_aksi/{{ $karyawan->id_karyawan }}" method="POST">
+                        @csrf
 
-        <label>Alamat:</label><br>
-        <input type="text" name="alamat_kry" value="{{ $karyawan->alamat_kry }}" required><br><br>
+                        <!-- Input Nama -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nama Karyawan:</label>
+                            <input type="text" name="nama_kry" value="{{ $karyawan->nama_kry }}" class="form-control" required>
+                        </div>
 
-        <label>Jenis Kelamin:</label><br>
-        <input type="radio" name="jk_kry" value="L" {{ $karyawan->jk_kry == 'L' ? 'checked' : '' }}> Laki-laki
-        <input type="radio" name="jk_kry" value="P" {{ $karyawan->jk_kry == 'P' ? 'checked' : '' }}> Perempuan
-        <br><br>
+                        <!-- Input Alamat -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Alamat:</label>
+                            <input type="text" name="alamat_kry" value="{{ $karyawan->alamat_kry }}" class="form-control" required>
+                        </div>
 
-        <button type="submit">Simpan Perubahan</button>
-    </form>
+                        <!-- Pilihan Jenis Kelamin -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold d-block">Jenis Kelamin:</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="jk_kry" id="jkL" value="L" {{ $karyawan->jk_kry == 'L' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="jkL">Laki-laki</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="jk_kry" id="jkP" value="P" {{ $karyawan->jk_kry == 'P' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="jkP">Perempuan</label>
+                            </div>
+                        </div>
 
-</body>
-</html>
+                        <!-- Tombol Simpan -->
+                        <button type="submit" class="btn btn-primary w-100 py-2 shadow-sm">Simpan Perubahan</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@endsection

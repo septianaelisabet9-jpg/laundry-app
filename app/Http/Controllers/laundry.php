@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Database; // Jangan lupa panggil Model Database kita
 use App\Exports\TransaksiExport;
 use App\Exports\PelangganExport;
 use App\Exports\LayananExport;
@@ -237,26 +238,20 @@ class Laundry extends Controller
         return Excel::download(new LayananExport, 'laporan-layanan-' . date('Y-m-d') . '.xlsx');
     }
 
-    // --- TRANSAKSI ---
+    // --- TRANSAKSI (Menggunakan Model Join) ---
     public function transaksi()
     {
         if (!session('u')) return redirect('/');
 
-        $transaksi = DB::table('transaksi')->get();
+        $db = new Database();
+        
+        // Memanggil fungsi join dari Model Database yang sudah kita buat sebelumnya
+        $transaksi = $db->tampilTransaksi();
 
         foreach ($transaksi as $t) {
-            $pelanggan = DB::table('pelanggan')->where('id', $t->id_pelanggan)->first();
-            $t->nama_pelanggan = $pelanggan ? $pelanggan->nama_pelanggan : '-';
-
+            // Ambil jumlah/berat dari detail_transaksi jika belum terpanggil di join
             $detail = DB::table('detail_transaksi')->where('id_transaksi', $t->id)->first();
-            if ($detail) {
-                $layanan = DB::table('layanan')->where('id', $detail->id_layanan)->first();
-                $t->nama_layanan = $layanan ? $layanan->nama_layanan : '-';
-                $t->berat = $detail->jumlah;
-            } else {
-                $t->nama_layanan = '-';
-                $t->berat = 0;
-            }
+            $t->berat = $detail ? $detail->jumlah : 0;
         }
 
         $data['transaksi'] = $transaksi;
@@ -276,7 +271,7 @@ class Laundry extends Controller
     {
         $layanan = DB::table('layanan')->where('id', $request->input('id_layanan'))->first();
         $berat   = $request->input('jumlah');
-        $total   = ($layanan ? $layanan->harga : 0) * $berat;
+        $total   = ($layanan ? $layanan->harga : 0) * $berat; // Perbaikan perkalian total
 
         $id_transaksi = DB::table('transaksi')->insertGetId([
             'id_pelanggan'   => $request->input('id_pelanggan'),
@@ -311,21 +306,12 @@ class Laundry extends Controller
     {
         if (!session('u')) return redirect('/');
 
-        $transaksi = DB::table('transaksi')->get();
+        $db = new Database();
+        $transaksi = $db->tampilTransaksi();
 
         foreach ($transaksi as $t) {
-            $pelanggan = DB::table('pelanggan')->where('id', $t->id_pelanggan)->first();
-            $t->nama_pelanggan = $pelanggan ? $pelanggan->nama_pelanggan : '-';
-
             $detail = DB::table('detail_transaksi')->where('id_transaksi', $t->id)->first();
-            if ($detail) {
-                $layanan = DB::table('layanan')->where('id', $detail->id_layanan)->first();
-                $t->nama_layanan = $layanan ? $layanan->nama_layanan : '-';
-                $t->berat = $detail->jumlah;
-            } else {
-                $t->nama_layanan = '-';
-                $t->berat = 0;
-            }
+            $t->berat = $detail ? $detail->jumlah : 0;
         }
         
         $pdf = new TCPDF();
@@ -341,9 +327,9 @@ class Laundry extends Controller
         foreach ($transaksi as $t) {
             $html .= '<tr>
                     <td>' . $no++ . '</td>
-                    <td>' . $t->nama_pelanggan . '</td>
-                    <td>' . $t->nama_layanan . '</td>
-                    <td>' . $t->berat . ' kg</td>
+                    <td>' . ($t->nama_pelanggan ?? '-') . '</td>
+                    <td>' . ($t->nama_layanan ?? '-') . '</td>
+                    <td>' . ($t->berat ?? 0) . ' kg</td>
                     <td>Rp ' . number_format($t->total_bayar, 0, ',', '.') . '</td>
                     <td>' . $t->status_laundry . '</td>
                   </tr>';
@@ -435,52 +421,36 @@ class Laundry extends Controller
         return redirect('/pembayaran');
     }
    
-    public function laporan(Request $request)
-    {
-        if (!session('u')) return redirect('/');
+   public function laporan(Request $request)
+{
+    if (!session('u')) return redirect('/');
 
-        $tgl_mulai   = $request->input('tgl_mulai');
-        $tgl_selesai = $request->input('tgl_selesai');
+    $tgl_mulai   = $request->input('tgl_mulai');
+    $tgl_selesai = $request->input('tgl_selesai');
 
-        $query = DB::table('pembayaran');
+    // Panggil dari Model Database
+    $model = new Database();
+    $laporan = $model->laporanPendapatan($tgl_mulai, $tgl_selesai);
 
-        if ($tgl_mulai && $tgl_selesai) {
-            $query->whereBetween('tgl_bayar', [$tgl_mulai, $tgl_selesai]);
-        }
+    $total_pemasukan = $laporan->sum('jmlh_bayar');
 
-        $pembayaran = $query->get();
-
-        foreach ($pembayaran as $p) {
-            $transaksi = DB::table('transaksi')->where('id', $p->id_transaksi)->first();
-            if ($transaksi) {
-                $pelanggan = DB::table('pelanggan')->where('id', $transaksi->id_pelanggan)->first();
-                $p->nama_pelanggan = $pelanggan ? $pelanggan->nama_pelanggan : '-';
-            } else {
-                $p->nama_pelanggan = '-';
-            }
-        }
-
-        $total_pemasukan = $pembayaran->sum('jmlh_bayar');
-
-        return view('laporan', [
-            'laporan'         => $pembayaran,
-            'total_pemasukan' => $total_pemasukan
-        ]);
-    }
+    return view('laporan', [
+        'laporan'         => $laporan,
+        'total_pemasukan' => $total_pemasukan
+    ]);
+}
 
     // --- KARYAWAN ---
     public function karyawan()
     {
         if (!session('u')) return redirect('/');
 
-        $data['karyawan'] = DB::table('karyawan')
-            ->leftJoin('users', 'karyawan.id_user', '=', 'users.id')
-            ->select('karyawan.*', 'users.name as username', 'users.email')
-            ->get();
+        $db = new Database();
+        $data['karyawan'] = $db->tampilKaryawanJoin();
 
         return view('karyawan', $data);
     }
-
+    
     public function tkry()
     {
         if (!session('u')) return redirect('/');
@@ -584,5 +554,16 @@ class Laundry extends Controller
     {
         if (!session('u')) return redirect('/');
         return Excel::download(new KaryawanExport, 'laporan-karyawan-' . date('Y-m-d') . '.xlsx');
+    }
+
+    public function create()
+    {
+        if (!session('u')) return redirect('/');
+        
+        return view('pesan');
+    }
+    public function store(Request $request)
+    {
+        return $this->simpanTransaksi($request);
     }
 }

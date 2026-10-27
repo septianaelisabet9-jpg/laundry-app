@@ -46,6 +46,8 @@ Route::get('/transaksi/excel', 'App\Http\Controllers\Laundry@excelTransaksi');
 // --- PEMBAYARAN ---
 Route::get('/pembayaran', 'App\Http\Controllers\Laundry@pembayaran');
 Route::get('/tambah-pembayaran', 'App\Http\Controllers\Laundry@tambahPembayaran');
+Route::get('/tambah_pembayaran', 'App\Http\Controllers\Laundry@tambahPembayaran');
+
 Route::post('/simpan_pembayaran', 'App\Http\Controllers\Laundry@simpanPembayaran');
 Route::get('/cetak_nota/{id}', 'App\Http\Controllers\Laundry@cetakNota');
 
@@ -60,3 +62,6 @@ Route::get('/karyawan/excel', 'App\Http\Controllers\Laundry@excelKaryawan');
 Route::post('/aksi_tkry', 'App\Http\Controllers\Laundry@aksi_tkry')->name('aksi_tkry');
 Route::get('/edit_karyawan/{id}', 'App\Http\Controllers\Laundry@editKaryawan');
 Route::post('/hapus_karyawan/{id}', 'App\Http\Controllers\Laundry@hapusKaryawan');
+
+Route::get('/pesan/', 'App\Http\Controllers\Laundry@create');
+Route::post('/pesan/simpan', 'App\Http\Controllers\Laundry@store');

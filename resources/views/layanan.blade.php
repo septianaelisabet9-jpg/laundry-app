@@ -7,7 +7,7 @@
     <!-- Baris Tombol Aksi -->
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
         <div>
-            <a href="/home" class="btn btn-outline-secondary btn-sm">&larr; Kembali ke Home</a>
+            <a href="/home" class="btn btn-outline-secondary btn-sm"> Kembali ke Home</a>
             <a href="/tambah-layanan" class="btn btn-primary btn-sm">+ Tambah Layanan Baru</a>
         </div>
         <div>
@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <!-- Tabel Bergaris Rapi (table-bordered) -->
+    
     <div class="table-responsive">
         <table class="table table-bordered table-striped align-middle w-100">
             <thead class="table-dark text-center">

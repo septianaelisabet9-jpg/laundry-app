@@ -1,15 +1,17 @@
 @extends('template')
 @section('content')
 
+
+
 <div class="container-fluid py-3">
-    <!-- Baris Tombol Atas (Navigasi & Ekspor Data) -->
+
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <div class="d-flex gap-2">
             <a href="/home" class="btn btn-outline-secondary btn-sm">&larr; Kembali ke Dashboard</a>
             <a href="/tkry" class="btn btn-primary btn-sm">+ Tambah Karyawan Baru</a>
         </div>
 
-        <!-- Tambahan Tombol Print, PDF, dan Excel -->
+ 
          <div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">Print Window</button>
             <a href="/karyawan/pdf" target="_blank" class="btn btn-danger btn-sm">Download PDF</a>
@@ -17,15 +19,15 @@
         </div>
     </div>
 
-    <!-- Tabel Data Karyawan -->
+    
     <div class="table-responsive">
         <table class="table table-bordered table-striped align-middle w-100">
             <thead class="table-dark text-center">
                 <tr>
                     <th>ID Karyawan</th>
                     <th>ID User</th>
-                    <th>Username Akun</th>
-                    <th>Email</th>
+                    <th>username</th>
+                    <th>email</th>
                     <th>Nama Karyawan</th>
                     <th>Alamat</th>
                     <th>Jenis Kelamin</th>
@@ -43,7 +45,8 @@
                     <td>{{ $k->nama_kry ?? '-' }}</td>
                     <td>{{ $k->alamat_kry ?? '-' }}</td>
                     <td class="text-center">{{ $k->jk_kry ?? '-' }}</td>
-                    <td>{{ $k->nama_layanan ?? '-' }}</td>
+                    <td>{{ $k->nama_layanan?? '-' }}</td>
+                    
                     <td class="text-center">
                         <div class="d-flex justify-content-center gap-1">
                             <a href="/edit_karyawan/{{ $k->id_karyawan }}" class="btn btn-success btn-sm">Edit</a>

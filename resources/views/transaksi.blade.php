@@ -1,62 +1,78 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Transaksi - Laundry</title>
-</head>
-<body>
-    <h2>Data Transaksi Laundry</h2>
+@extends('template') 
 
-    <button type="button" onclick="window.print()">Window Print</button>
-    <button type="button"><a href="/transaksi/pdf" target="_blank">📄 Download PDF</a></button>
-    <button><a href="/transaksi/excel">📊 Export Excel</a></button>
-   
-    <br><br>
+@section('content')
+<div class="container my-4">
+    
+    <!-- Judul Halaman -->
+    <h3 class="fw-bold mb-3">Data Transaksi Laundry</h3>
 
-    <button>
-        <a href="/tambah-transaksi">Tambah Transaksi Baru</a>
-    </button>
+    <!-- Baris Tombol Atas (Menyesuaikan Layanan: Kiri untuk Navigasi, Kanan untuk Export) -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <a href="/home" class="btn btn-outline-secondary btn-sm">Kembali ke Home</a>
+            <a href="/tambah-transaksi" class="btn btn-primary btn-sm fw-semibold shadow-sm">+ Tambah Transaksi Baru</a>
+        </div>
+        <div>
+            <button type="button" onclick="window.print()" class="btn btn-secondary">Print Window</button>
+            <a href="/transaksi/pdf" target="_blank" class="btn btn-danger btn-sm">Download PDF</a>
+            <a href="/transaksi/excel" class="btn btn-success btn-sm">Export Excel</a>
+        </div>
+    </div>
 
-    <button>
-        <a href="/home">Kembali ke Home</a>
-    </button>
+    <!-- Tabel Data -->
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="ps-3">No</th>
+                            <th>Nama Pelanggan</th>
+                            <th>Layanan</th>
+                            <th>Berat</th>
+                            <th>Total Bayar</th>
+                            <th>Status Laundry</th>
+                            <th>Status Bayar</th>
+                            <th class="text-center pe-3">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($transaksi as $t)
+                        <tr>
+                            <td class="ps-3">{{ $loop->iteration }}</td>
+                            <td class="fw-semibold">{{ $t->nama_pelanggan ?? '-' }}</td>
+                            <td>{{ $t->nama_layanan ?? '-' }}</td>
+                            <td>{{ $t->berat ?? 0 }} kg</td>
+                            <td class="fw-semibold text-primary">Rp {{ number_format($t->total_bayar, 0, ',', '.') }}</td>
+                            <td>
+                                <!-- Badge Status Laundry yang Dinamis -->
+                                @if($t->status_laundry == 'Selesai')
+                                    <span class="badge bg-success">Selesai</span>
+                                @else
+                                    <span class="badge bg-warning text-dark">Proses</span>
+                                    <br>
+                                    <a href="/update-status-laundry/{{ $t->id }}" class="btn btn-outline-success btn-sm py-0 px-2 mt-1" style="font-size: 11px;" onclick="return confirm('Tandai transaksi ini sudah selesai?')">Tandai Selesai</a>
+                                @endif
+                            </td>
+                            <td>
+                                <span class="badge {{ $t->status_bayar == 'Lunas' ? 'bg-success' : 'bg-danger' }}">
+                                    {{ $t->status_bayar }}
+                                </span>
+                            </td>
+                            <td class="text-center pe-3">
+                                <a href="/hapus-transaksi/{{ $t->id }}" class="btn btn-danger btn-sm py-0 px-2 shadow-sm" onclick="return confirm('Yakin ingin menghapus transaksi ini?')">Hapus</a>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">Belum ada data transaksi laundry.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    <br><br>
-
-    <table border="1" cellpadding="10" cellspacing="0">
-        <tr>
-            <th>No</th>
-            <th>Nama Pelanggan</th>
-            <th>Layanan</th>
-            <th>Berat (kg)</th>
-            <th>Total Bayar</th>
-            <th>Status Laundry</th>
-            <th>Status Bayar</th>
-            <th>Aksi</th>
-        </tr>
-        @foreach($transaksi as $t)
-        <tr>
-            <td>{{ $loop->iteration }}</td>
-            <td>{{ $t->nama_pelanggan }}</td>
-            <td>{{ $t->nama_layanan }}</td>
-            <td>{{ $t->berat }} kg</td>
-            <td>Rp {{ number_format($t->total_bayar, 0, ',', '.') }}</td>
-            <td>
-                {{ $t->status_laundry }}
-                @if($t->status_laundry == 'Proses')
-                    <br>
-                    <a href="/update-status-laundry/{{ $t->id }}" onclick="return confirm('Tandai laundry ini sudah selesai?')">
-                        <button type="button">Tandai Selesai</button>
-                    </a>
-                @endif
-            </td>
-            <td>{{ $t->status_bayar }}</td>
-            <td>
-                <a href="/hapus-transaksi/{{ $t->id }}" onclick="return confirm('Yakin ingin menghapus transaksi ini?')">Hapus</a>
-            </td>
-        </tr>
-        @endforeach
-    </table>
-</body>
-</html>
+</div>
+@endsection
