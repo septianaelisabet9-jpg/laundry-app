@@ -21,7 +21,7 @@
             <thead class="table-dark text-center">
                 <tr>
                     <th>ID Karyawan</th>
-                    <th>Foto</th> <!-- Kolom Baru untuk Foto -->
+                    <th>Foto</th>
                     <th>ID User</th>
                     <th>username</th>
                     <th>email</th>
@@ -34,8 +34,14 @@
             </thead>
             <tbody>
                 @foreach($karyawan as $k)
+                @php
+                    // Otomatis mendeteksi nama kolom primary key apapun di database
+                    $columns = array_keys(get_object_vars($k));
+                    $primaryKey = $columns[0] ?? 'id';
+                @endphp
                 <tr>
-                    <td class="text-center">{{ $k->id_karyawan }}</td>
+                    <!-- ID Karyawan Dinamis -->
+                    <td class="text-center">{{ $k->{$primaryKey} }}</td>
                     
                     <!-- Menampilkan Foto dari folder assets/img/ -->
                     <td class="text-center">
@@ -46,7 +52,7 @@
                         @endif
                     </td>
 
-                    <td class="text-center">{{ $k->id_user }}</td>
+                    <td class="text-center">{{ $k->id_user ?? '-' }}</td>
                     <td>{{ $k->username ?? '-' }}</td>
                     <td>{{ $k->email ?? '-' }}</td>
                     <td>{{ $k->nama_kry ?? '-' }}</td>
@@ -56,9 +62,11 @@
                     
                     <td class="text-center">
                         <div class="d-flex justify-content-center gap-1">
-                            <a href="/edit_karyawan/{{ $k->id_karyawan }}" class="btn btn-success btn-sm">Edit</a>
+                            <!-- Tombol Edit -->
+                            <a href="/edit_karyawan/{{ $k->{$primaryKey} }}" class="btn btn-success btn-sm">Edit</a>
                             
-                            <form action="/hapus_karyawan/{{ $k->id_karyawan }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                            <!-- Tombol Hapus -->
+                            <form action="/hapus_karyawan/{{ $k->{$primaryKey} }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                 @csrf
                                 <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                             </form>
@@ -70,5 +78,4 @@
         </table>
     </div>
 </div>
-
 @endsection

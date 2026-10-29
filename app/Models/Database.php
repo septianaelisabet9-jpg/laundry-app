@@ -29,7 +29,6 @@ class Database extends Model
         return DB::table('karyawan')
             ->leftJoin('users', 'karyawan.id_user', '=', 'users.id')
             ->select('karyawan.*', 'users.name as username', 'users.email')
-            ->orderBy('karyawan.id_karyawan', 'DESC') // <-- INI AGAR DATA TERBARU MUNCUL DI PALING ATAS
             ->get();
     }
 

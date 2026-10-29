@@ -80,19 +80,30 @@ class Laundry extends Controller
         return view('tambah_pelanggan');
     }
 
-    public function simpanPelanggan(Request $request)
+public function simpanPelanggan(Request $request)
     {
+        $nama_file = null;
+
+        // Cek apakah ada file foto yang di-upload
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $nama_file = time() . "_" . $file->getClientOriginalName();
+            // Pindahkan file ke folder public/assets/img/
+            $file->move(public_path('assets/img'), $nama_file);
+        }
+
         DB::table('pelanggan')->insert([
             'nama_pelanggan' => $request->input('nama_pelanggan'),
             'no_tlpn'        => $request->input('no_tlpn'),
             'alamat'         => $request->input('alamat'),
+            'img'            => $nama_file, // Menyimpan nama file ke database
             'created_at'     => now(),
             'updated_at'     => now(),
         ]);
 
         return redirect('/pelanggan');
     }
-
+    
     public function hapusPelanggan($id)
     {
         DB::table('pelanggan')->where('id', $id)->delete();
@@ -487,18 +498,17 @@ class Laundry extends Controller
     return redirect('/karyawan');
 }
 
-    public function editKaryawan($id)
-    {
-        if (!session('u')) return redirect('/');
+   public function editKaryawan($id)
+{
+    // Ubah id_karyawan menjadi id_kry
+    $karyawan = DB::table('karyawan')
+        ->leftJoin('users', 'karyawan.id_user', '=', 'users.id')
+        ->select('karyawan.*', 'users.name as username', 'users.email')
+        ->where('karyawan.id_kry', $id) // <-- Ganti di sini
+        ->first();
 
-        $data['karyawan'] = DB::table('karyawan')
-            ->leftJoin('users', 'karyawan.id_user', '=', 'users.id')
-            ->select('karyawan.*', 'users.name as username', 'users.email')
-            ->where('karyawan.id_karyawan', $id)
-            ->first();
-
-        return view('edit_karyawan', $data);
-    }
+    return view('edit_karyawan', compact('karyawan'));
+}
 
    public function editKaryawanAksi(Request $request, $id)
     {
