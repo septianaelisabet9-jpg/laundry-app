@@ -24,19 +24,14 @@ class Database extends Model
         return DB::table($tabel)->insert($data);
     }
     
-   public function tampilKaryawanJoin()
-{
-    return DB::table('karyawan')
-        ->join('users', 'karyawan.id_user', '=', 'users.id')
-        ->join('layanan', 'karyawan.id_layanan', '=', 'layanan.id')
-        ->select(
-            'karyawan.*',
-            'users.name as username',
-            'users.email',
-            'layanan.nama_layanan'
-        )
-        ->get();
-}
+    public function tampilKaryawanJoin()
+    {
+        return DB::table('karyawan')
+            ->leftJoin('users', 'karyawan.id_user', '=', 'users.id')
+            ->select('karyawan.*', 'users.name as username', 'users.email')
+            ->orderBy('karyawan.id_karyawan', 'DESC') // <-- INI AGAR DATA TERBARU MUNCUL DI PALING ATAS
+            ->get();
+    }
 
     public function tampilTransaksi()
     {
@@ -55,23 +50,23 @@ class Database extends Model
             ->get();
     }
 
-   public function laporanPendapatan($tgl_mulai, $tgl_selesai)
+    public function laporanPendapatan($tgl_mulai, $tgl_selesai)
     {
-    $query = DB::table('transaksi')
-        ->leftJoin('pelanggan', 'transaksi.id_pelanggan', '=', 'pelanggan.id')
-        ->leftJoin('detail_transaksi', 'transaksi.id', '=', 'detail_transaksi.id_transaksi')
-        ->leftJoin('layanan', 'detail_transaksi.id_layanan', '=', 'layanan.id')
-        ->select(
-            'transaksi.*',
-            'pelanggan.nama_pelanggan',
-            'layanan.harga as jmlh_bayar',
-            'transaksi.created_at as tgl_bayar'
-        );
+        $query = DB::table('transaksi')
+            ->leftJoin('pelanggan', 'transaksi.id_pelanggan', '=', 'pelanggan.id')
+            ->leftJoin('detail_transaksi', 'transaksi.id', '=', 'detail_transaksi.id_transaksi')
+            ->leftJoin('layanan', 'detail_transaksi.id_layanan', '=', 'layanan.id')
+            ->select(
+                'transaksi.*',
+                'pelanggan.nama_pelanggan',
+                'layanan.harga as jmlh_bayar',
+                'transaksi.created_at as tgl_bayar'
+            );
 
-    if ($tgl_mulai && $tgl_selesai) {
-        $query->whereBetween('transaksi.created_at', [$tgl_mulai, $tgl_selesai]);
-    }
+        if ($tgl_mulai && $tgl_selesai) {
+            $query->whereBetween('transaksi.created_at', [$tgl_mulai, $tgl_selesai]);
+        }
 
-    return $query->get();
+        return $query->get();
     }
 }

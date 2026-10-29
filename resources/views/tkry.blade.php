@@ -14,9 +14,10 @@
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-body p-4">
                     <h3 class="fw-bold mb-1">Input Karyawan Baru</h3>
-                    <p class="text-muted small mb-4">Tambahkan akun login dan data lengkap karyawan baru di sini.</p>
+                    <p class="text-muted small mb-4">Tambahkan akun login, data lengkap, dan foto karyawan baru di sini.</p>
 
-                    <form action="/aksi_tkry" method="POST">
+                    <!-- 1. TAMBAHKAN enctype DI SINI -->
+                    <form action="/aksi_tkry" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <!-- Username -->
@@ -61,7 +62,7 @@
                         </div>
 
                         <!-- Jenis Kelamin -->
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label class="form-label fw-semibold d-block">Jenis Kelamin:</label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="jk" id="jkL" value="L" required>
@@ -71,6 +72,13 @@
                                 <input class="form-check-input" type="radio" name="jk" id="jkP" value="P" required>
                                 <label class="form-check-label" for="jkP">Perempuan</label>
                             </div>
+                        </div>
+
+                        <!-- 2. INPUT UPLOAD FOTO BARU -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Foto Karyawan (Img):</label>
+                            <input type="file" name="img" class="form-control" accept="image/*" required>
+                            <div class="form-text text-muted">Format file: JPG, PNG, JPEG.</div>
                         </div>
 
                         <!-- Tombol Aksi -->

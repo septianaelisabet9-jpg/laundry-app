@@ -459,24 +459,33 @@ class Laundry extends Controller
         return view('Tkry', $data);
     }
 
-    public function aksi_tkry(Request $request)
-    {
-        $userId = DB::table('users')->insertGetId([
-            'name'     => $request->input('us'),
-            'password' => $request->input('ps'),
-            'email'    => $request->input('email'),
-            'level'    => $request->input('le')
-        ]);
+   public function aksi_tkry(Request $request)
+{
+    $kuromi1S = null;
 
-        DB::table('karyawan')->insert([
-            'id_user'    => $userId,
-            'nama_kry'   => $request->input('s'),
-            'alamat_kry' => $request->input('b'),
-            'jk_kry'     => $request->input('jk')
-        ]);
-
-        return redirect('/karyawan');
+    if ($request->hasFile('img')) {
+        $file = $request->file('img');
+        $kuromi1S = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('assets/img'), $kuromi1S);
     }
+
+    $userId = DB::table('users')->insertGetId([
+        'name'     => $request->input('us'),
+        'password' => $request->input('ps'),
+        'email'    => $request->input('email'),
+        'level'    => $request->input('le')
+    ]);
+
+    DB::table('karyawan')->insert([
+        'id_user'    => $userId,
+        'nama_kry'   => $request->input('s'),
+        'alamat_kry' => $request->input('b'),
+        'jk_kry'     => $request->input('jk'),
+        'img'        => $kuromi1S
+    ]);
+
+    return redirect('/karyawan');
+}
 
     public function editKaryawan($id)
     {
@@ -491,13 +500,23 @@ class Laundry extends Controller
         return view('edit_karyawan', $data);
     }
 
-    public function editKaryawanAksi(Request $request, $id)
+   public function editKaryawanAksi(Request $request, $id)
     {
-        DB::table('karyawan')->where('id_karyawan', $id)->update([
+        $updateData = [
             'nama_kry'   => $request->input('nama_kry'),
             'alamat_kry' => $request->input('alamat_kry'),
             'jk_kry'     => $request->input('jk_kry')
-        ]);
+        ];
+
+        // Cek jika ada upload foto baru saat edit
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $namaFile = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('assets/img'), $namaFile);
+            $updateData['img'] = $namaFile; // Masukkan ke data yang di-update
+        }
+
+        DB::table('karyawan')->where('id_karyawan', $id)->update($updateData);
 
         return redirect('/karyawan');
     }

@@ -2,7 +2,7 @@
 
 @section('content')
 
-<title>edit karyawan</title>
+<title>Edit Karyawan</title>
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -18,7 +18,8 @@
                     <h3 class="fw-bold mb-3">Edit Data Karyawan</h3>
                     <p class="text-muted small mb-4">Silakan perbarui informasi karyawan di bawah ini.</p>
 
-                    <form action="/edit_karyawan_aksi/{{ $karyawan->id_karyawan }}" method="POST">
+                    <!-- WAJIB ADA: enctype="multipart/form-data" untuk upload file -->
+                    <form action="/edit_karyawan_aksi/{{ $karyawan->id_karyawan }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <!-- Input Nama -->
@@ -34,7 +35,7 @@
                         </div>
 
                         <!-- Pilihan Jenis Kelamin -->
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label class="form-label fw-semibold d-block">Jenis Kelamin:</label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="jk_kry" id="jkL" value="L" {{ $karyawan->jk_kry == 'L' ? 'checked' : '' }}>
@@ -44,6 +45,24 @@
                                 <input class="form-check-input" type="radio" name="jk_kry" id="jkP" value="P" {{ $karyawan->jk_kry == 'P' ? 'checked' : '' }}>
                                 <label class="form-check-label" for="jkP">Perempuan</label>
                             </div>
+                        </div>
+
+                        <!-- INPUT UPLOAD FOTO BARU -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Foto Karyawan:</label>
+                            
+                            <!-- Tampilkan foto saat ini jika ada -->
+                            @if($karyawan->img)
+                                <div class="mb-2 d-flex align-items-center gap-2">
+                                    <img src="{{ asset('assets/img/' . $karyawan->img) }}" alt="Foto Lama" width="50" height="50" class="rounded-circle" style="object-fit: cover;">
+                                    <span class="text-muted small">Foto saat ini</span>
+                                </div>
+                            @else
+                                <div class="mb-2 text-muted small">Belum ada foto</div>
+                            @endif
+
+                            <input type="file" name="img" class="form-control" accept="image/*">
+                            <div class="form-text text-muted">Biarkan kosong jika tidak ingin mengubah foto.</div>
                         </div>
 
                         <!-- Tombol Simpan -->
