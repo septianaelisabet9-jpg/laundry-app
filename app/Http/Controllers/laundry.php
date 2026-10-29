@@ -80,19 +80,30 @@ class Laundry extends Controller
         return view('tambah_pelanggan');
     }
 
-    public function simpanPelanggan(Request $request)
+public function simpanPelanggan(Request $request)
     {
+        $nama_file = null;
+
+        // Cek apakah ada file foto yang di-upload
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $nama_file = time() . "_" . $file->getClientOriginalName();
+            // Pindahkan file ke folder public/assets/img/
+            $file->move(public_path('assets/img'), $nama_file);
+        }
+
         DB::table('pelanggan')->insert([
             'nama_pelanggan' => $request->input('nama_pelanggan'),
             'no_tlpn'        => $request->input('no_tlpn'),
             'alamat'         => $request->input('alamat'),
+            'img'            => $nama_file, // Menyimpan nama file ke database
             'created_at'     => now(),
             'updated_at'     => now(),
         ]);
 
         return redirect('/pelanggan');
     }
-
+    
     public function hapusPelanggan($id)
     {
         DB::table('pelanggan')->where('id', $id)->delete();

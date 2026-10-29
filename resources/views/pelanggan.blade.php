@@ -4,7 +4,6 @@
 <div class="container-fluid py-3">
     <h2 class="mb-4">Data Pelanggan Laundry</h2>
 
-    
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
         <div>
             <a href="/home" class="btn btn-outline-secondary btn-sm">&larr; Kembali ke Home</a>
@@ -24,6 +23,7 @@
                 <tr>
                     <th width="50">No</th>
                     <th>Nama Pelanggan</th>
+                    <th>Foto</th>
                     <th>No Telepon</th>
                     <th>Alamat</th>
                     <th width="140">Aksi</th>
@@ -34,6 +34,13 @@
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>{{ $p->nama_pelanggan }}</td>
+                    <td class="text-center">
+                        @if($p->img)
+                            <img src="{{ asset('assets/img/' . $p->img) }}" alt="Foto" width="40" height="40" class="rounded-circle" style="object-fit: cover;">
+                        @else
+                            <span class="text-muted small">No Image</span>
+                        @endif
+                    </td>
                     <td>{{ $p->no_tlpn }}</td>
                     <td>{{ $p->alamat }}</td>
                     <td class="text-center">
