@@ -16,7 +16,8 @@
                     <h3 class="fw-bold mb-1">Tambah Pelanggan Baru</h3>
                     <p class="text-muted small mb-4">Masukkan data lengkap pelanggan baru laundry di sini.</p>
 
-                    <form action="/simpan_pelanggan" method="POST">
+                    <!-- WAJIB ADA: enctype="multipart/form-data" untuk upload foto -->
+                    <form action="/simpan_pelanggan" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <!-- Input Nama Pelanggan -->
@@ -32,9 +33,16 @@
                         </div>
 
                         <!-- Input Alamat -->
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label class="form-label fw-semibold">Alamat:</label>
                             <textarea name="alamat" class="form-control" rows="3" placeholder="Masukkan alamat lengkap..." required></textarea>
+                        </div>
+
+                        <!-- Input Foto Pelanggan -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Foto Pelanggan:</label>
+                            <input type="file" name="img" class="form-control" accept="image/*">
+                            <div class="form-text text-muted">Format yang didukung: JPG, JPEG, PNG.</div>
                         </div>
 
                         <!-- Tombol Aksi -->

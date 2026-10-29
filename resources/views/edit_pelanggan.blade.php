@@ -16,7 +16,8 @@
                     <h3 class="fw-bold mb-3">Edit Data Pelanggan</h3>
                     <p class="text-muted small mb-4">Silakan perbarui informasi data pelanggan di bawah ini.</p>
 
-                    <form action="/edit_pelanggan_aksi/{{ $pelanggan->id }}" method="POST">
+                    <!-- WAJIB ADA: enctype="multipart/form-data" untuk mendukung upload foto -->
+                    <form action="/edit_pelanggan_aksi/{{ $pelanggan->id }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <!-- Input Nama Pelanggan -->
@@ -32,9 +33,27 @@
                         </div>
 
                         <!-- Input Alamat -->
-                        <div class="mb-4">
+                        <div class="mb-3">
                             <label class="form-label fw-semibold">Alamat:</label>
                             <textarea name="alamat" class="form-control" rows="3" required>{{ $pelanggan->alamat }}</textarea>
+                        </div>
+
+                        <!-- Input Foto Pelanggan -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Foto Pelanggan:</label>
+                            
+                            <!-- Tampilkan foto saat ini jika ada -->
+                            @if($pelanggan->img)
+                                <div class="mb-2 d-flex align-items-center gap-2">
+                                    <img src="{{ asset('assets/img/' . $pelanggan->img) }}" alt="Foto Lama" width="50" height="50" class="rounded-circle" style="object-fit: cover;">
+                                    <span class="text-muted small">Foto saat ini</span>
+                                </div>
+                            @else
+                                <div class="mb-2 text-muted small">Belum ada foto</div>
+                            @endif
+
+                            <input type="file" name="img" class="form-control" accept="image/*">
+                            <div class="form-text text-muted">Biarkan kosong jika tidak ingin mengubah foto.</div>
                         </div>
 
                         <!-- Tombol Aksi -->
