@@ -1,81 +1,132 @@
+
 @extends('template')
+
 @section('content')
 
-<div class="container-fluid py-3">
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
 
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <div class="d-flex gap-2">
-            <a href="/home" class="btn btn-outline-secondary btn-sm">&larr; Kembali ke Dashboard</a>
-            <a href="/tkry" class="btn btn-primary btn-sm">+ Tambah Karyawan Baru</a>
-        </div>
+            <div class="card">
+                <div class="card-body">
 
-        <div>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">Print Window</button>
-            <a href="/karyawan/pdf" target="_blank" class="btn btn-danger btn-sm">Download PDF</a>
-            <a href="/karyawan/excel" class="btn btn-success btn-sm">Export Excel</a>
-        </div>
-    </div>
+                    <h5 class="card-title">Data Karyawan Laundry</h5>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped align-middle w-100">
-            <thead class="table-dark text-center">
-                <tr>
-                    <th>ID Karyawan</th>
-                    <th>Foto</th>
-                    <th>ID User</th>
-                    <th>username</th>
-                    <th>email</th>
-                    <th>Nama Karyawan</th>
-                    <th>Alamat</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Layanan</th>
-                    <th width="140">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($karyawan as $k)
-                @php
-                    // Otomatis mendeteksi nama kolom primary key apapun di database
-                    $columns = array_keys(get_object_vars($k));
-                    $primaryKey = $columns[0] ?? 'id';
-                @endphp
-                <tr>
-                    <!-- ID Karyawan Dinamis -->
-                    <td class="text-center">{{ $k->{$primaryKey} }}</td>
-                    
-                    <!-- Menampilkan Foto dari folder assets/img/ -->
-                    <td class="text-center">
-                        @if($k->img)
-                            <img src="{{ asset('assets/img/' . $k->img) }}" alt="Foto" width="40" height="40" class="rounded-circle" style="object-fit: cover;">
-                        @else
-                            <span class="text-muted small">No Image</span>
-                        @endif
-                    </td>
+                    <!-- Tombol Aksi -->
+                    <div class="d-flex flex-wrap justify-content-between mb-3 gap-2">
+                        <div>
+                            <a href="/home" class="btn btn-outline-secondary btn-sm">
+                                &larr; Kembali ke Dashboard
+                            </a>
 
-                    <td class="text-center">{{ $k->id_user ?? '-' }}</td>
-                    <td>{{ $k->username ?? '-' }}</td>
-                    <td>{{ $k->email ?? '-' }}</td>
-                    <td>{{ $k->nama_kry ?? '-' }}</td>
-                    <td>{{ $k->alamat_kry ?? '-' }}</td>
-                    <td class="text-center">{{ $k->jk_kry ?? '-' }}</td>
-                    <td>{{ $k->nama_layanan ?? '-' }}</td>
-                    
-                    <td class="text-center">
-                        <div class="d-flex justify-content-center gap-1">
-                            <!-- Tombol Edit -->
-                            <a href="/edit_karyawan/{{ $k->{$primaryKey} }}" class="btn btn-success btn-sm">Edit</a>
-                            
-                            <!-- Tombol Hapus -->
-                            <form action="/hapus_karyawan/{{ $k->{$primaryKey} }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                @csrf
-                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                            </form>
+                            <a href="/tkry" class="btn btn-primary btn-sm">
+                                + Tambah Karyawan Baru
+                            </a>
                         </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+
+                        <div>
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                onclick="window.print()">
+                                Print Window
+                            </button>
+
+                            <a href="/karyawan/pdf" target="_blank"
+                                class="btn btn-danger btn-sm">
+                                Download PDF
+                            </a>
+
+                            <a href="/karyawan/excel"
+                                class="btn btn-success btn-sm">
+                                Export Excel
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Table with DataTables -->
+                    <table class="table datatable">
+                        <thead>
+                            <tr>
+                                <th>ID Karyawan</th>
+                                <th>Foto</th>
+                                <th>ID User</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Nama Karyawan</th>
+                                <th>Alamat</th>
+                                <th>Jenis Kelamin</th>
+                                <th>Layanan</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach($karyawan as $k)
+
+                            @php
+                                $columns = array_keys(get_object_vars($k));
+                                $primaryKey = $columns[0] ?? 'id';
+                            @endphp
+
+                            <tr>
+                                <td>{{ $k->{$primaryKey} }}</td>
+
+                                <td>
+                                    @if($k->img)
+                                        <img src="{{ asset('assets/img/' . $k->img) }}"
+                                            alt="Foto"
+                                            width="40"
+                                            height="40"
+                                            class="rounded-circle"
+                                            style="object-fit: cover;">
+                                    @else
+                                        <span class="text-muted small">No Image</span>
+                                    @endif
+                                </td>
+
+                                <td>{{ $k->id_user ?? '-' }}</td>
+
+                                <td>{{ $k->username ?? '-' }}</td>
+
+                                <td>{{ $k->email ?? '-' }}</td>
+
+                                <td>{{ $k->nama_kry ?? '-' }}</td>
+
+                                <td>{{ $k->alamat_kry ?? '-' }}</td>
+
+                                <td>{{ $k->jk_kry ?? '-' }}</td>
+
+                                <td>{{ $k->nama_layanan ?? '-' }}</td>
+
+                                <td>
+                                    <a href="/edit_karyawan/{{ $k->{$primaryKey} }}"
+                                        class="btn btn-success btn-sm">
+                                        Edit
+                                    </a>
+
+                                    <form action="/hapus_karyawan/{{ $k->{$primaryKey} }}"
+                                        method="POST"
+                                        style="display:inline;"
+                                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+
+                                        @csrf
+
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <!-- End Table with DataTables -->
+
+                </div>
+            </div>
+
+        </div>
     </div>
-</div>
+</section>
+
 @endsection

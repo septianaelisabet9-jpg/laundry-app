@@ -9,27 +9,42 @@ class Database extends Model
 {
     protected $guarded = ['id'];
 
-    public function pull($tabel, $kondisi)
+      public function pull($tabel, $kondisi)
     {
-        return DB::table($tabel)->where($kondisi)->first();
+        return DB::table($tabel)
+            ->where($kondisi)
+            ->first();
     }
+
 
     public function tampil($tabel)
     {
-        return DB::table($tabel)->get();
+        return DB::table($tabel)
+            ->orderBy('id', 'DESC')
+            ->get();
     }
 
     public function tambah($tabel, $data)
     {
         return DB::table($tabel)->insert($data);
     }
-    
+
     public function tampilKaryawanJoin()
     {
         return DB::table('karyawan')
             ->leftJoin('users', 'karyawan.id_user', '=', 'users.id')
             ->select('karyawan.*', 'users.name as username', 'users.email')
+            ->orderBy('karyawan.id_user', 'DESC')
             ->get();
+    }
+
+    public function editKaryawanJoin($id)
+    {
+        return DB::table('karyawan')
+            ->leftJoin('users', 'karyawan.id_user', '=', 'users.id')
+            ->select('karyawan.*', 'users.name as username', 'users.email')
+            ->where('karyawan.id_user', $id)
+            ->first();
     }
 
     public function tampilTransaksi()
@@ -46,6 +61,7 @@ class Database extends Model
                 'layanan.harga',
                 'detail_transaksi.jumlah as berat'
             )
+            ->orderBy('transaksi.id', 'DESC')
             ->get();
     }
 
@@ -66,6 +82,8 @@ class Database extends Model
             $query->whereBetween('transaksi.created_at', [$tgl_mulai, $tgl_selesai]);
         }
 
-        return $query->get();
+        return $query
+            ->orderBy('transaksi.id', 'DESC')
+            ->get();
     }
 }

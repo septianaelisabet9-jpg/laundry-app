@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Database; // Jangan lupa panggil Model Database kita
+use Illuminate\Support\Facades\Storage;
+use App\Models\Database;
 use App\Exports\TransaksiExport;
 use App\Exports\PelangganExport;
 use App\Exports\LayananExport;
@@ -14,26 +15,30 @@ use TCPDF;
 
 class Laundry extends Controller
 {
-    // --- AUTH & NAVIGASI ---
     public function index()
     {
         return view("login");
     }
 
-    public function aksilogin(Request $request)
-    {
-        $user = DB::table('users')
-            ->where('name', $request->input('username'))
-            ->where('password', $request->input('password'))
-            ->first();
+   public function aksilogin(Request $request)
+{
+    $user = DB::table('users')
+        ->where('name', $request->input('username'))
+        ->where('password', $request->input('password'))
+        ->first();
 
-        if ($user) {
-            session(['u' => $user->name, 'id_user' => $user->id]);
-            return redirect('/home');
-        } else {
-            return redirect('/')->with('error', 'Username atau Password salah!');
-        }
+    if ($user) {
+        session([
+            'u'       => $user->name,
+            'id_user' => $user->id,
+            'foto'    => $user->foto
+        ]);
+
+        return redirect('/home');
+    } else {
+        return redirect('/')->with('error', 'Username atau Password salah!');
     }
+}
 
     public function home()
     {
@@ -77,38 +82,34 @@ class Laundry extends Controller
 
     public function tambahPelanggan()
     {
+        if (!session('u')) return redirect('/');
         return view('tambah_pelanggan');
     }
 
-public function simpanPelanggan(Request $request)
-    {
-        $nama_file = null;
+  public function simpanPelanggan(Request $request)
+{
+    $nama_file = null;
 
-        // Cek apakah ada file foto yang di-upload
-        if ($request->hasFile('img')) {
-            $file = $request->file('img');
-            $nama_file = time() . "_" . $file->getClientOriginalName();
-            // Pindahkan file ke folder public/assets/img/
-            $file->move(public_path('assets/img'), $nama_file);
-        }
+    if ($request->hasFile('img')) {
+        $file = $request->file('img');
 
-        DB::table('pelanggan')->insert([
-            'nama_pelanggan' => $request->input('nama_pelanggan'),
-            'no_tlpn'        => $request->input('no_tlpn'),
-            'alamat'         => $request->input('alamat'),
-            'img'            => $nama_file, // Menyimpan nama file ke database
-            'created_at'     => now(),
-            'updated_at'     => now(),
-        ]);
+        $nama_file = time() . '_' . $file->getClientOriginalName();
 
-        return redirect('/pelanggan');
+        $file->move(public_path('assets/img'), $nama_file);
     }
-    
-    public function hapusPelanggan($id)
-    {
-        DB::table('pelanggan')->where('id', $id)->delete();
-        return redirect('/pelanggan');
-    }
+
+    DB::table('pelanggan')->insert([
+        'nama_pelanggan' => $request->input('nama_pelanggan'),
+        'no_tlpn'        => $request->input('no_tlpn'),
+        'alamat'         => $request->input('alamat'),
+        'img'            => $nama_file,
+        'created_at'     => now(),
+        'updated_at'     => now(),
+    ]);
+
+    return redirect('/pelanggan');
+}
+
 
     public function editPelanggan($id)
     {
@@ -120,11 +121,20 @@ public function simpanPelanggan(Request $request)
 
     public function editPelangganAksi(Request $request, $id)
     {
-        DB::table('pelanggan')->where('id', $id)->update([
+        $updateData = [
             'nama_pelanggan' => $request->input('nama_pelanggan'),
             'no_tlpn'        => $request->input('no_tlpn'),
             'alamat'         => $request->input('alamat'),
-        ]);
+        ];
+
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $nama_file = time() . "_" . $file->getClientOriginalName();
+            $file->move(public_path('assets/img'), $nama_file);
+            $updateData['img'] = $nama_file;
+        }
+
+        DB::table('pelanggan')->where('id', $id)->update($updateData);
 
         return redirect('/pelanggan');
     }
@@ -133,6 +143,7 @@ public function simpanPelanggan(Request $request)
     {
         if (!session('u')) return redirect('/');
 
+        ob_start();
         $pelanggan = DB::table('pelanggan')->get();
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
         $pdf->setPrintHeader(false);
@@ -224,6 +235,7 @@ public function simpanPelanggan(Request $request)
     {
         if (!session('u')) return redirect('/');
 
+        ob_start();
         $layanan = DB::table('layanan')->get();
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
         $pdf->setPrintHeader(false);
@@ -249,18 +261,15 @@ public function simpanPelanggan(Request $request)
         return Excel::download(new LayananExport, 'laporan-layanan-' . date('Y-m-d') . '.xlsx');
     }
 
-    // --- TRANSAKSI (Menggunakan Model Join) ---
+    // --- TRANSAKSI ---
     public function transaksi()
     {
         if (!session('u')) return redirect('/');
 
         $db = new Database();
-        
-        // Memanggil fungsi join dari Model Database yang sudah kita buat sebelumnya
         $transaksi = $db->tampilTransaksi();
 
         foreach ($transaksi as $t) {
-            // Ambil jumlah/berat dari detail_transaksi jika belum terpanggil di join
             $detail = DB::table('detail_transaksi')->where('id_transaksi', $t->id)->first();
             $t->berat = $detail ? $detail->jumlah : 0;
         }
@@ -282,7 +291,7 @@ public function simpanPelanggan(Request $request)
     {
         $layanan = DB::table('layanan')->where('id', $request->input('id_layanan'))->first();
         $berat   = $request->input('jumlah');
-        $total   = ($layanan ? $layanan->harga : 0) * $berat; // Perbaikan perkalian total
+        $total   = ($layanan ? $layanan->harga : 0) * $berat;
 
         $id_transaksi = DB::table('transaksi')->insertGetId([
             'id_pelanggan'   => $request->input('id_pelanggan'),
@@ -317,6 +326,7 @@ public function simpanPelanggan(Request $request)
     {
         if (!session('u')) return redirect('/');
 
+        ob_start();
         $db = new Database();
         $transaksi = $db->tampilTransaksi();
 
@@ -432,24 +442,23 @@ public function simpanPelanggan(Request $request)
         return redirect('/pembayaran');
     }
    
-   public function laporan(Request $request)
-{
-    if (!session('u')) return redirect('/');
+    public function laporan(Request $request)
+    {
+        if (!session('u')) return redirect('/');
 
-    $tgl_mulai   = $request->input('tgl_mulai');
-    $tgl_selesai = $request->input('tgl_selesai');
+        $tgl_mulai   = $request->input('tgl_mulai');
+        $tgl_selesai = $request->input('tgl_selesai');
 
-    // Panggil dari Model Database
-    $model = new Database();
-    $laporan = $model->laporanPendapatan($tgl_mulai, $tgl_selesai);
+        $model = new Database();
+        $laporan = $model->laporanPendapatan($tgl_mulai, $tgl_selesai);
 
-    $total_pemasukan = $laporan->sum('jmlh_bayar');
+        $total_pemasukan = $laporan->sum('jmlh_bayar');
 
-    return view('laporan', [
-        'laporan'         => $laporan,
-        'total_pemasukan' => $total_pemasukan
-    ]);
-}
+        return view('laporan', [
+            'laporan'         => $laporan,
+            'total_pemasukan' => $total_pemasukan
+        ]);
+    }
 
     // --- KARYAWAN ---
     public function karyawan()
@@ -470,13 +479,15 @@ public function simpanPelanggan(Request $request)
         return view('Tkry', $data);
     }
 
-   public function aksi_tkry(Request $request)
+    public function aksi_tkry(Request $request)
 {
     $kuromi1S = null;
 
     if ($request->hasFile('img')) {
         $file = $request->file('img');
+
         $kuromi1S = time() . '_' . $file->getClientOriginalName();
+
         $file->move(public_path('assets/img'), $kuromi1S);
     }
 
@@ -497,43 +508,43 @@ public function simpanPelanggan(Request $request)
 
     return redirect('/karyawan');
 }
-
-   public function editKaryawan($id)
+  public function editKaryawan($id)
 {
-    // Ubah id_karyawan menjadi id_kry
-    $karyawan = DB::table('karyawan')
-        ->leftJoin('users', 'karyawan.id_user', '=', 'users.id')
-        ->select('karyawan.*', 'users.name as username', 'users.email')
-        ->where('karyawan.id_kry', $id) // <-- Ganti di sini
-        ->first();
+    if (!session('u')) return redirect('/');
+
+    $db = new \App\Models\Database();
+    $karyawan = $db->editKaryawanJoin($id);
 
     return view('edit_karyawan', compact('karyawan'));
 }
 
-   public function editKaryawanAksi(Request $request, $id)
-    {
-        $updateData = [
-            'nama_kry'   => $request->input('nama_kry'),
-            'alamat_kry' => $request->input('alamat_kry'),
-            'jk_kry'     => $request->input('jk_kry')
-        ];
+    public function editKaryawanAksi(Request $request, $id)
+{
+    $updateData = [
+        'nama_kry'   => $request->input('nama_kry'),
+        'alamat_kry' => $request->input('alamat_kry'),
+        'jk_kry'     => $request->input('jk_kry')
+    ];
 
-        // Cek jika ada upload foto baru saat edit
-        if ($request->hasFile('img')) {
-            $file = $request->file('img');
-            $namaFile = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('assets/img'), $namaFile);
-            $updateData['img'] = $namaFile; // Masukkan ke data yang di-update
-        }
+    if ($request->hasFile('img')) {
+        $file = $request->file('img');
+        $namaFile = time() . '_' . $file->getClientOriginalName();
 
-        DB::table('karyawan')->where('id_karyawan', $id)->update($updateData);
+        $file->move(public_path('assets/img'), $namaFile);
 
-        return redirect('/karyawan');
+        $updateData['img'] = $namaFile;
     }
 
+    DB::table('karyawan')
+        ->where('id_karyawan', $id)
+        ->update($updateData);
+
+    return redirect('/karyawan');
+}
     public function hapusKaryawan($id)
     {
-        DB::table('karyawan')->where('id_karyawan', $id)->delete();
+        DB::table('karyawan')->where('id_user', $id)->delete();
+        DB::table('users')->where('id', $id)->delete();
         return redirect('/karyawan');
     }
 
@@ -541,6 +552,7 @@ public function simpanPelanggan(Request $request)
     {
         if (!session('u')) return redirect('/');
 
+        ob_start();
         $karyawan = DB::table('karyawan')
             ->leftJoin('users', 'karyawan.id_user', '=', 'users.id')
             ->select('karyawan.*', 'users.name as username', 'users.email')
@@ -588,11 +600,85 @@ public function simpanPelanggan(Request $request)
     public function create()
     {
         if (!session('u')) return redirect('/');
-        
         return view('pesan');
     }
+
     public function store(Request $request)
     {
         return $this->simpanTransaksi($request);
     }
+
+    // HALAMAN PROFILE
+public function profile()
+{
+    $user = DB::table('users')
+        ->where('id', session('id_user'))
+        ->first();
+
+    return view('users-profile', compact('user'));
+}
+
+
+// UPDATE FOTO PROFILE
+
+public function updateFoto(Request $request)
+{
+    if (!session('id_user')) {
+        return redirect('/');
+    }
+
+    $request->validate([
+        'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048'
+    ]);
+
+    $user = DB::table('users')
+        ->where('id', session('id_user'))
+        ->first();
+
+    if (!$user) {
+        return redirect('/')->with('error', 'Pengguna tidak ditemukan!');
+    }
+
+    // Upload foto baru
+    $file = $request->file('foto');
+    $namaFoto = uniqid('profile_') . '.' . $file->extension();
+
+    $file->storeAs('profile', $namaFoto, 'public');
+
+    // Update foto di database
+    DB::table('users')
+        ->where('id', session('id_user'))
+        ->update([
+            'foto' => $namaFoto
+        ]);
+
+    // Hapus foto lama setelah foto baru berhasil disimpan
+    if ($user->foto) {
+        Storage::disk('public')->delete('profile/' . $user->foto);
+    }
+
+    // Perbarui session
+    session(['foto' => $namaFoto]);
+
+    return redirect('/profile')
+        ->with('success', 'Foto profil berhasil diperbarui!');
+}
+
+public function riwayatTransaksi()
+    {
+        if (!session('u')) return redirect('/');
+
+        $db = new Database();
+        $transaksi = $db->tampilTransaksi();
+
+        foreach ($transaksi as $t) {
+            $detail = DB::table('detail_transaksi')->where('id_transaksi', $t->id)->first();
+            $t->berat = $detail ? $detail->jumlah : 0;
+        }
+
+        $data['transaksi'] = $transaksi;
+        return view('transaksi_riwayat', $data); 
+    }
+
+    
 }

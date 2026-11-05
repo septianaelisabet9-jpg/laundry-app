@@ -10,23 +10,19 @@
                 <a href="/pelanggan" class="btn btn-outline-secondary btn-sm">&larr; Kembali ke Data Pelanggan</a>
             </div>
 
-            <!-- Card Form Edit -->
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-body p-4">
                     <h3 class="fw-bold mb-3">Edit Data Pelanggan</h3>
                     <p class="text-muted small mb-4">Silakan perbarui informasi data pelanggan di bawah ini.</p>
 
-                    <!-- WAJIB ADA: enctype="multipart/form-data" untuk mendukung upload foto -->
-                    <form action="/edit_pelanggan_aksi/{{ $pelanggan->id }}" method="POST" enctype="multipart/form-data">
+                  <form action="/edit_pelanggan_aksi/{{ $pelanggan->id }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        <!-- Input Nama Pelanggan -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Nama Pelanggan:</label>
                             <input type="text" name="nama_pelanggan" value="{{ $pelanggan->nama_pelanggan }}" class="form-control" required>
                         </div>
 
-                        <!-- Input No Telepon -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">No Telepon:</label>
                             <input type="text" name="no_tlpn" value="{{ $pelanggan->no_tlpn }}" class="form-control" required>
