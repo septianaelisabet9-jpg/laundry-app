@@ -1,15 +1,8 @@
 
     <title>Login</title>
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-    <style>
-    body {
-        
-        background-image: url('{{ asset("img/laundry.png") }}');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-</style>
+    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
+<link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
 </head>
 <body class="bg-light d-flex align-items-center justify-content-center vh-100">
 

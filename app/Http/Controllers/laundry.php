@@ -71,7 +71,6 @@ class Laundry extends Controller
         return redirect('/login')->with('success', 'Registrasi berhasil, silakan login!');
     }
 
-    // --- PELANGGAN ---
     public function pelanggan()
     {
         if (!session('u')) return redirect('/');
@@ -179,7 +178,6 @@ class Laundry extends Controller
         return Excel::download(new PelangganExport, 'laporan-pelanggan-' . date('Y-m-d') . '.xlsx');
     }
 
-    // --- LAYANAN ---
     public function layanan()
     {
         if (!session('u')) return redirect('/');
@@ -261,7 +259,6 @@ class Laundry extends Controller
         return Excel::download(new LayananExport, 'laporan-layanan-' . date('Y-m-d') . '.xlsx');
     }
 
-    // --- TRANSAKSI ---
     public function transaksi()
     {
         if (!session('u')) return redirect('/');
@@ -377,7 +374,6 @@ class Laundry extends Controller
         return redirect('/transaksi');
     }
 
-    // --- PEMBAYARAN ---
     public function pembayaran()
     {
         if (!session('u')) return redirect('/');
@@ -460,7 +456,6 @@ class Laundry extends Controller
         ]);
     }
 
-    // --- KARYAWAN ---
     public function karyawan()
     {
         if (!session('u')) return redirect('/');
@@ -608,7 +603,6 @@ class Laundry extends Controller
         return $this->simpanTransaksi($request);
     }
 
-    // HALAMAN PROFILE
 public function profile()
 {
     $user = DB::table('users')
@@ -619,7 +613,6 @@ public function profile()
 }
 
 
-// UPDATE FOTO PROFILE
 
 public function updateFoto(Request $request)
 {
@@ -639,25 +632,21 @@ public function updateFoto(Request $request)
         return redirect('/')->with('error', 'Pengguna tidak ditemukan!');
     }
 
-    // Upload foto baru
     $file = $request->file('foto');
     $namaFoto = uniqid('profile_') . '.' . $file->extension();
 
     $file->storeAs('profile', $namaFoto, 'public');
 
-    // Update foto di database
     DB::table('users')
         ->where('id', session('id_user'))
         ->update([
             'foto' => $namaFoto
         ]);
 
-    // Hapus foto lama setelah foto baru berhasil disimpan
     if ($user->foto) {
         Storage::disk('public')->delete('profile/' . $user->foto);
     }
 
-    // Perbarui session
     session(['foto' => $namaFoto]);
 
     return redirect('/profile')

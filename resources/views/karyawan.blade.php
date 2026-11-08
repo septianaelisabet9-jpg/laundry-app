@@ -120,7 +120,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <!-- End Table with DataTables -->
+                    
 
                 </div>
             </div>

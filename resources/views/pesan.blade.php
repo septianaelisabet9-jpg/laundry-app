@@ -5,17 +5,8 @@
     <div class="row justify-content-center">
         <div class="container" style="max-width: 450px;">
 
-        <style>
-    body {
-        
-        background-image: url('{{ asset("img/laundry.png") }}');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-</style>
+  
             
-            <!-- Kartu Kotak Form Pesan Laundry -->
             <div class="card shadow-lg border-0 bg-white">
                 <div class="card-body p-4">
                     <h3 class="fw-bold text-primary text-center mb-1">Form Pesan Laundry 🧺</h3>

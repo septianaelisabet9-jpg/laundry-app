@@ -4,16 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <!-- Memanggil CSS Bootstrap -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-    <style>
-        body {
-            background-image: url('{{ asset("img/laundry.png") }}');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-    </style>
+
 </head>
 <body class="d-flex align-items-center justify-content-start vh-100" style="padding-left: 8%;">
 
