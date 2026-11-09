@@ -12,7 +12,6 @@
 
                     <h5 class="card-title">Data Layanan Laundry</h5>
 
-                    <!-- Tombol Aksi -->
                     <div class="d-flex flex-wrap justify-content-between mb-3 gap-2">
                         <div>
                             <a href="/home" class="btn btn-outline-secondary btn-sm">
@@ -40,7 +39,6 @@
                         </div>
                     </div>
 
-                    <!-- Table with DataTables -->
                     <table class="table datatable">
                         <thead>
                             <tr>

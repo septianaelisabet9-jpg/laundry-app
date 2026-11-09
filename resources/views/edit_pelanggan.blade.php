@@ -34,11 +34,9 @@
                             <textarea name="alamat" class="form-control" rows="3" required>{{ $pelanggan->alamat }}</textarea>
                         </div>
 
-                        <!-- Input Foto Pelanggan -->
                         <div class="mb-4">
                             <label class="form-label fw-semibold">Foto Pelanggan:</label>
                             
-                            <!-- Tampilkan foto saat ini jika ada -->
                             @if($pelanggan->img)
                                 <div class="mb-2 d-flex align-items-center gap-2">
                                     <img src="{{ asset('assets/img/' . $pelanggan->img) }}" alt="Foto Lama" width="50" height="50" class="rounded-circle" style="object-fit: cover;">
@@ -52,7 +50,6 @@
                             <div class="form-text text-muted">Biarkan kosong jika tidak ingin mengubah foto.</div>
                         </div>
 
-                        <!-- Tombol Aksi -->
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary w-100 py-2 shadow-sm">Simpan Perubahan</button>
                             <a href="/pelanggan" class="btn btn-light w-100 py-2 border">Batal</a>

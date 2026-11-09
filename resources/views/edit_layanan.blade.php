@@ -19,7 +19,6 @@
                     <form action="/edit_layanan_aksi/{{ $layanan->id }}" method="POST">
                         @csrf
 
-                        <!-- Input Nama Layanan -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Nama Layanan:</label>
                             <input type="text" name="nama_layanan" value="{{ $layanan->nama_layanan }}" class="form-control" required>

@@ -7,7 +7,6 @@
     <div class="row">
         <div class="col-lg-12">
 
-            <!-- Judul dan Tombol Aksi -->
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <div>
                     <h5 class="card-title mb-1">Laporan Pendapatan Laundry</h5>
@@ -38,7 +37,6 @@
                 </div>
             </div>
 
-            <!-- Form Filter Tanggal -->
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Filter Laporan</h5>
@@ -125,8 +123,6 @@
                             @endforelse
                         </tbody>
                     </table>
-
-                    <!-- End Table with DataTables -->
 
                 </div>
             </div>

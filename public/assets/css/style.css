@@ -351,6 +351,133 @@ h6 {
   border-bottom: 2px solid #4154f1;
 }
 
+
+    .dashboard {
+        padding: 25px 10px;
+        color: #263449;
+    }
+
+    .welcome-card {
+        background: linear-gradient(120deg, #2878d0, #65b6e8);
+        border-radius: 20px;
+        padding: 35px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(40, 120, 208, 0.18);
+    }
+
+    .welcome-card h2 {
+        font-weight: 700;
+        font-size: 28px;
+    }
+
+    .welcome-card p {
+        opacity: .9;
+        margin-bottom: 0;
+    }
+
+    .welcome-icon {
+        position: absolute;
+        right: 35px;
+        top: 20px;
+        font-size: 85px;
+        opacity: .2;
+    }
+
+    .section-title {
+        font-weight: 700;
+        margin: 30px 0 18px;
+    }
+
+    .menu-card {
+        background: white;
+        border: 1px solid #edf1f7;
+        border-radius: 16px;
+        padding: 23px 18px;
+        height: 100%;
+        text-decoration: none;
+        color: #263449;
+        display: block;
+        transition: .3s;
+        box-shadow: 0 4px 15px rgba(0,0,0,.035);
+    }
+
+    .menu-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 25px rgba(40,120,208,.12);
+        color: #2878d0;
+    }
+
+    .menu-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 27px;
+        margin-bottom: 17px;
+    }
+
+    .menu-card h5 {
+        font-weight: 700;
+        font-size: 16px;
+        margin-bottom: 7px;
+    }
+
+    .menu-card p {
+        color: #8b97a8;
+        font-size: 13px;
+        margin-bottom: 0;
+    }
+
+      body {
+        
+        background-image: url('../img/laundry.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+     body {
+        
+        background-image: url('../img/laundry.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .icon-blue { background: #e8f2ff; }
+    .icon-green { background: #e6f8ef; }
+    .icon-orange { background: #fff2df; }
+    .icon-purple { background: #f1eaff; }
+    .icon-pink { background: #ffeaf0; }
+    .icon-cyan { background: #e4f8fb; }
+    .icon-yellow { background: #fff8dc; }
+
+    .logout-btn {
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 576px) {
+        .welcome-card {
+            padding: 25px;
+        }
+
+        .welcome-card h2 {
+            font-size: 22px;
+        }
+
+        .welcome-icon {
+            right: 15px;
+            font-size: 55px;
+        }
+    }
+
+
 /*--------------------------------------------------------------
 # Header
 --------------------------------------------------------------*/
@@ -1230,4 +1357,34 @@ h6 {
   text-align: center;
   font-size: 13px;
   color: #012970;
+}
+
+body {
+    background-image: url('../img/laundry.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+/* =================================
+   BACKGROUND MENU CARD
+================================= */
+
+.dashboard a.menu-card {
+    display: block !important;
+    background: #e9ecef !important;
+    background-color: #e9ecef !important;
+    background-image: none !important;
+    border: 1px solid #dee2e6;
+}
+
+/* Saat mouse diarahkan */
+.dashboard a.menu-card:hover {
+    background: #e9ecef !important;
+    background-color: #e9ecef !important;
+    background-image: none !important;
+}
+
+/* Isi kartu */
+.dashboard a.menu-card > * {
+    background-color: transparent !important;
 }
