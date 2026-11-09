@@ -31,7 +31,8 @@ class Laundry extends Controller
         session([
             'u'       => $user->name,
             'id_user' => $user->id,
-            'foto'    => $user->foto
+            'foto'    => $user->foto,
+            'level'   => $user->level
         ]);
 
         return redirect('/home');
