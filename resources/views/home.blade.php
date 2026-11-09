@@ -115,7 +115,7 @@
 
 <div class="container-fluid dashboard">
 
-    <!-- WELCOME -->
+
     <div class="welcome-card mb-4">
         <div class="welcome-icon">🧺</div>
 
@@ -127,7 +127,7 @@
         </p>
     </div>
 
-    <!-- MENU -->
+
     <h4 class="section-title">Menu Navigasi</h4>
     <p class="text-muted mb-4">
         Pilih menu untuk mengelola sistem Laundry kamu.
@@ -193,12 +193,12 @@
 
     </div>
 
-    <!-- LOGOUT -->
+  
     <div class="mt-5 pt-3 d-flex justify-content-end">
         <a href="/logout"
            class="btn btn-outline-danger logout-btn"
            onclick="return confirm('Apakah kamu yakin ingin logout?')">
-            ↪ Logout
+            Logout
         </a>
     </div>
 

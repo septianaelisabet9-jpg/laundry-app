@@ -639,25 +639,25 @@ public function updateFoto(Request $request)
         return redirect('/')->with('error', 'Pengguna tidak ditemukan!');
     }
 
-    // Upload foto baru
+
     $file = $request->file('foto');
     $namaFoto = uniqid('profile_') . '.' . $file->extension();
 
     $file->storeAs('profile', $namaFoto, 'public');
 
-    // Update foto di database
+  
     DB::table('users')
         ->where('id', session('id_user'))
         ->update([
             'foto' => $namaFoto
         ]);
 
-    // Hapus foto lama setelah foto baru berhasil disimpan
+    
     if ($user->foto) {
         Storage::disk('public')->delete('profile/' . $user->foto);
     }
 
-    // Perbarui session
+
     session(['foto' => $namaFoto]);
 
     return redirect('/profile')
