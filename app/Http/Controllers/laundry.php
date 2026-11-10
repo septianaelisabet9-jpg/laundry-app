@@ -72,9 +72,14 @@ class Laundry extends Controller
         return redirect('/login')->with('success', 'Registrasi berhasil, silakan login!');
     }
 
-    public function pelanggan()
+   public function pelanggan()
     {
         if (!session('u')) return redirect('/');
+        
+        
+        if (session('level') != 'Admin') {
+            return redirect('/home')->with('error', 'Akses ditolak!');
+        }
 
         $data['pelanggan'] = DB::table('pelanggan')->get();
         return view('pelanggan', $data);
@@ -182,6 +187,10 @@ class Laundry extends Controller
     public function layanan()
     {
         if (!session('u')) return redirect('/');
+
+        if (session('level') != 'Admin') {
+            return redirect('/home')->with('error', 'Akses ditolak!');
+        }
 
         $data['layanan'] = DB::table('layanan')->get();
         return view('layanan', $data);
@@ -375,9 +384,13 @@ class Laundry extends Controller
         return redirect('/transaksi');
     }
 
-    public function pembayaran()
+   public function pembayaran()
     {
         if (!session('u')) return redirect('/');
+
+        if (session('level') != 'Admin') {
+            return redirect('/home')->with('error', 'Akses ditolak!');
+        }
 
         $pembayaran = DB::table('pembayaran')->get();
 
@@ -402,7 +415,6 @@ class Laundry extends Controller
             'transaksi'  => $transaksiList
         ]);
     }
-
     public function tambahPembayaran()
     {
         if (!session('u')) return redirect('/');
