@@ -76,6 +76,10 @@ class Laundry extends Controller
     {
         if (!session('u')) return redirect('/');
 
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
+
         $data['pelanggan'] = DB::table('pelanggan')->get();
         return view('pelanggan', $data);
     }
@@ -83,6 +87,11 @@ class Laundry extends Controller
     public function tambahPelanggan()
     {
         if (!session('u')) return redirect('/');
+
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
+
         return view('tambah_pelanggan');
     }
 
@@ -114,6 +123,10 @@ class Laundry extends Controller
     public function editPelanggan($id)
     {
         if (!session('u')) return redirect('/');
+
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
 
         $data['pelanggan'] = DB::table('pelanggan')->where('id', $id)->first();
         return view('edit_pelanggan', $data);
@@ -183,12 +196,19 @@ class Laundry extends Controller
     {
         if (!session('u')) return redirect('/');
 
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
+
         $data['layanan'] = DB::table('layanan')->get();
         return view('layanan', $data);
     }
 
     public function tambahLayanan()
     {
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
         return view('tambah_layanan');
     }
 
@@ -214,6 +234,10 @@ class Laundry extends Controller
     public function editLayanan($id)
     {
         if (!session('u')) return redirect('/');
+
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
 
         $data['layanan'] = DB::table('layanan')->where('id', $id)->first();
         return view('edit_layanan', $data);
@@ -379,6 +403,10 @@ class Laundry extends Controller
     {
         if (!session('u')) return redirect('/');
 
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
+
         $pembayaran = DB::table('pembayaran')->get();
 
         foreach ($pembayaran as $p) {
@@ -406,6 +434,10 @@ class Laundry extends Controller
     public function tambahPembayaran()
     {
         if (!session('u')) return redirect('/');
+
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
 
         $data['transaksi'] = DB::table('transaksi')
             ->join('pelanggan', 'transaksi.id_pelanggan', '=', 'pelanggan.id')
@@ -443,6 +475,10 @@ class Laundry extends Controller
     {
         if (!session('u')) return redirect('/');
 
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
+
         $tgl_mulai   = $request->input('tgl_mulai');
         $tgl_selesai = $request->input('tgl_selesai');
 
@@ -461,6 +497,10 @@ class Laundry extends Controller
     {
         if (!session('u')) return redirect('/');
 
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
+
         $db = new Database();
         $data['karyawan'] = $db->tampilKaryawanJoin();
 
@@ -470,6 +510,10 @@ class Laundry extends Controller
     public function tkry()
     {
         if (!session('u')) return redirect('/');
+
+        if (session('level') != 'Admin') {
+            return redirect('/home');
+        }
 
         $data['layanan'] = DB::table('layanan')->get();
         return view('Tkry', $data);
@@ -488,7 +532,7 @@ class Laundry extends Controller
     }
 
     $userId = DB::table('users')->insertGetId([
-        'name'     => $request->input('us'),
+        'name'    => $request->input('us'),
         'password' => $request->input('ps'),
         'email'    => $request->input('email'),
         'level'    => $request->input('le')
@@ -507,6 +551,10 @@ class Laundry extends Controller
   public function editKaryawan($id)
 {
     if (!session('u')) return redirect('/');
+
+    if (session('level') != 'Admin') {
+        return redirect('/home');
+    }
 
     $db = new \App\Models\Database();
     $karyawan = $db->editKaryawanJoin($id);
@@ -633,25 +681,21 @@ public function updateFoto(Request $request)
         return redirect('/')->with('error', 'Pengguna tidak ditemukan!');
     }
 
-    // Upload foto baru
     $file = $request->file('foto');
     $namaFoto = uniqid('profile_') . '.' . $file->extension();
 
     $file->storeAs('profile', $namaFoto, 'public');
 
-    // Update foto di database
     DB::table('users')
         ->where('id', session('id_user'))
         ->update([
             'foto' => $namaFoto
         ]);
 
-    // Hapus foto lama setelah foto baru berhasil disimpan
     if ($user->foto) {
         Storage::disk('public')->delete('profile/' . $user->foto);
     }
 
-    // Perbarui session
     session(['foto' => $namaFoto]);
 
     return redirect('/profile')
@@ -673,6 +717,4 @@ public function riwayatTransaksi()
         $data['transaksi'] = $transaksi;
         return view('transaksi_riwayat', $data); 
     }
-
-    
 }
